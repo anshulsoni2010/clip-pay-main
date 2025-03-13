@@ -20,6 +20,8 @@ interface EarningsClientProps {
   hasStripeAccount: boolean
   totalEarned: number
   availableForPayout: number
+  hasPayPalAccount: boolean
+  paypalAccountStatus: string
   pendingEarnings: number
   submissions: Array<{
     id: string
@@ -37,6 +39,9 @@ export function EarningsClient({
   availableForPayout,
   pendingEarnings,
   submissions,
+  hasPayPalAccount,
+  paypalAccountStatus
+
 }: EarningsClientProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -87,21 +92,36 @@ export function EarningsClient({
                   : "Link your bank account to start receiving payments"}
               </p>
             </div>
-            {hasStripeAccount ? (
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-xs font-medium border border-emerald-200">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Connected
-                </span>
-              </div>
-            ) : (
-              <Button
-                onClick={() => (window.location.href = "/api/stripe/connect")}
-                className="bg-black hover:bg-black/90 text-white"
-              >
-                Connect Now
-              </Button>
-            )}
+            <div className="grid grid-cols-2 gap-4">
+  <div className="bg-white border border-zinc-200 rounded-lg p-6">
+    <h2 className="text-lg font-semibold text-zinc-900">Stripe</h2>
+    <p className="text-sm text-zinc-600 mt-1">
+      {hasStripeAccount ? "Connected" : "Not connected"}
+    </p>
+    {hasStripeAccount ? (
+      <span className="text-green-600">✔ Active</span>
+    ) : (
+      <Button onClick={() => (window.location.href = "/api/stripe/connect")}>
+        Connect Stripe
+      </Button>
+    )}
+  </div>
+
+  <div className="bg-white border border-zinc-200 rounded-lg p-6">
+    <h2 className="text-lg font-semibold text-zinc-900">PayPal</h2>
+    <p className="text-sm text-zinc-600 mt-1">
+      {hasPayPalAccount ? "Connected" : "Not connected"}
+    </p>
+    {hasPayPalAccount ? (
+      <span className="text-green-600">✔ Active</span>
+    ) : (
+      <Button onClick={() => (window.location.href = "/api/paypal/connect")}>
+        Connect PayPal
+      </Button>
+    )}
+  </div>
+</div>
+
           </div>
         </div>
       </div>

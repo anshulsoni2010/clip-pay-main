@@ -1,6 +1,7 @@
 "use server"
 import { redirect } from "next/navigation"
 import { createServerActionClient } from "../auth/actions"
+import { url } from "inspector"
 
 export async function signIn(formData: FormData) {
   const email = formData.get("email") as string
@@ -164,6 +165,37 @@ export async function signInWithGoogle(userType: "creator" | "brand") {
 
   if (error) {
     console.error("Google sign in error:", error)
+    throw error
+  }
+
+  if (data?.url) {
+    console.log("data ",data?.url);
+    return data.url
+  }
+
+  throw new Error("No authentication URL returned")
+}
+
+export async function connectYouTubeAccount() {
+  const supabase = await createServerActionClient()
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+  const redirectUrl = new URL(`/auth/youtube/callback`, baseUrl)
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: redirectUrl.toString(),
+      scopes: "https://www.googleapis.com/auth/youtube.readonly",
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
+  })
+
+  if (error) {
+    console.error("YouTube connection error:", error)
     throw error
   }
 

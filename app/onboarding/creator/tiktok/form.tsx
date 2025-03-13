@@ -4,12 +4,13 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { connectYouTubeAccount } from "@/app/actions/auth"
 
 export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: string }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
+  const [isConnected, setIsConnected] = useState(false)
   const handleTikTokAuth = async () => {
     setIsLoading(true)
     setError(null)
@@ -35,6 +36,35 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
       setIsLoading(false)
     }
   }
+  // const handleYouTubeAuth = async () => {
+  //   setIsLoading(true)
+  //   setError(null)
+
+  //   try {
+  //     // Call your YouTube auth API endpoint
+  //     const response = await fetch("/api/youtube/auth")
+  //     const data = await response.json()
+
+  //     if (data.error) {
+  //       throw new Error(data.error)
+  //     }
+
+  //     if (!data.url) {
+  //       throw new Error("No authentication URL returned")
+  //     }
+
+  //     // Redirect to YouTube OAuth flow
+  //     window.location.href = data.url
+  //   } catch (err) {
+  //     console.error("Error initiating YouTube auth:", err)
+  //     setError(
+  //       err instanceof Error ? err.message : "Failed to connect with YouTube"
+  //     )
+  //     setIsLoading(false)
+  //   }
+  // }
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-8">
@@ -85,26 +115,26 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
           </Button>
 
           {/* YouTube Connection */}
-          {youtubeAccessToken ? (
-            <Button disabled className="w-full h-11 bg-green-500 text-white">
-              ✅ Connected with YouTube
-            </Button>
-          ) : (
-            <Button
-              onClick={() => router.push("/api/youtube/auth")}
-              className="w-full h-11 bg-white hover:bg-zinc-200 border border-zinc-400 text-black flex items-center justify-center gap-2"
-            >
-              <Image
-                src="/youtube.png"
-                alt="YouTube"
-                width={20}
-                height={20}
-                className="flex-shrink-0"
-              />
-              Connect YouTube Account
-            </Button>
-          )}
-
+          {isConnected ? (
+        <Button disabled className="w-full h-11 bg-green-500 text-white">
+          ✅ Connected with YouTube
+        </Button>
+      ) : (
+        <Button
+        onClick={() => router.push("/api/youtube/auth")}
+          disabled={isLoading}
+          className="w-full h-11 bg-white hover:bg-zinc-200 border border-zinc-400 text-black flex items-center justify-center gap-2"
+        >
+          <Image
+            src="/youtube.png"
+            alt="YouTube"
+            width={20}
+            height={20}
+            className="flex-shrink-0"
+          />
+          {isLoading ? "Connecting..." : "Connect YouTube Account"}
+        </Button>
+      )}
           <a href="/dashboard" className="w-full h-11 text-zinc-600 hover:bg-zinc-100">
             Skip for Now
           </a>

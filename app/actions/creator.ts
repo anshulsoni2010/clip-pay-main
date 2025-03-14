@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache"
 import { Database } from "@/types/supabase"
 import { TikTokAPI } from "@/lib/tiktok"
 import { YouTubeAPI } from "@/lib/youtube"
+import { getInstagramReelViews } from "@/lib/instagram"
 
 interface ReferralData {
   profile_id: string
@@ -146,7 +147,9 @@ export async function updateSubmissionVideoUrl(
     const isYouTube =
       videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")
 
-    if (!isTikTok && !isYouTube) {
+      const isInstagram = videoUrl.includes("instagram.com/reel/");
+
+    if (!isTikTok && !isYouTube&& !isInstagram) {
       return {
         success: false,
         error: "Invalid video URL. Use TikTok or YouTube.",
@@ -177,6 +180,12 @@ export async function updateSubmissionVideoUrl(
     } else if (isYouTube) {
       // Use YouTube Data API to fetch video details
       videoInfo = await YouTubeAPI.getVideoInfo(videoUrl) // ✅ Use YouTubeAPI from the new file
+    }
+
+    else if (isInstagram) {
+      // Fetch Instagram Reel views from Apify
+      const views = await getInstagramReelViews(videoUrl);
+      videoInfo = { views };
     }
 
     if (!videoInfo) {
@@ -212,7 +221,7 @@ export async function updateSubmissionVideoUrl(
       .update({
         video_url: videoUrl,
         views: videoInfo.views,
-        platform: isTikTok ? "TikTok" : "YouTube",
+        platform: isTikTok ? "TikTok" : isYouTube ? "YouTube" : "Instagram",
       })
       .eq("id", submissionId)
       .eq("user_id", user.id)

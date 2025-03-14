@@ -71,6 +71,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
 
+  const emailSent = await sendEmailNotification(email);
+  if (!emailSent.success) {
+    return NextResponse.json({ error: "Failed to send email", details: emailSent.error }, { status: 500 });
+  }
+
   console.log("User type updated to 'brand_team' for:", userId);
 
   return NextResponse.json({ message: "Team member added & user_type updated successfully" });
@@ -145,3 +150,39 @@ export async function GET(req: Request) {
   return NextResponse.json(result);
 }
 
+// 🔹 Function to send email via Resend
+async function sendEmailNotification(email: string) {
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "notifications@clippay.live",
+        to: email,
+        subject: "Welcome to the Team!",
+        html: `
+          <h1>You've been added to the team!</h1>
+          <p>Hello,</p>
+          <p>You have been successfully added to the team. You can now log in and start collaborating.</p>
+          <p>Best regards,</p>
+          <p>Your Company</p>
+        `,
+      }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log("Email sent successfully:", result);
+      return { success: true };
+    } else {
+      console.error("Error sending email:", result);
+      return { success: false, error: result };
+    }
+  } catch (error) {
+    console.error("Exception in sending email:", error);
+    return { success: false, error };
+  }
+}

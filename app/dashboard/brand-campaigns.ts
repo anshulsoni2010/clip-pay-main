@@ -1,36 +1,50 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server"
 import { CampaignWithSubmissions } from "./page"
 
-export const getBrandCampaigns = async (): Promise<
-  CampaignWithSubmissions[]
-> => {
-  const supabase = await createServerSupabaseClient()
+export const getBrandCampaigns = async (): Promise<CampaignWithSubmissions[]> => {
+  const supabase = await createServerSupabaseClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("No user found")
+    throw new Error("No user found");
   }
 
-  // First get the brand ID and profile
+  // First, check if the user is a brand owner
   const { data: brand } = await supabase
     .from("brands")
-    .select("id")
+    .select("id, user_id")
     .eq("user_id", user.id)
-    .single()
+    .single();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", user.id)
-    .single()
+  let brandUserId = brand?.user_id || null;
 
-  if (!profile || !brand) {
-    throw new Error("Brand or profile not found")
+  // If the user is a brand team member, get the brand_id
+  if (!brandUserId) {
+    const { data: brandTeamMember } = await supabase
+      .from("brand_team_members")
+      .select("brand_id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (brandTeamMember) {
+      // Get the actual brand's user_id from brands table
+      const { data: brandData } = await supabase
+        .from("brands")
+        .select("user_id")
+        .eq("id", brandTeamMember.brand_id)
+        .single();
+
+      brandUserId = brandData?.user_id || null;
+    }
   }
 
-  // Get all campaigns with submissions
+  if (!brandUserId) {
+    throw new Error("Brand or profile not found");
+  }
+
+  // Get all campaigns where the user_id matches the brandUserId
   const { data: campaigns, error } = await supabase
     .from("campaigns")
     .select(
@@ -55,44 +69,18 @@ export const getBrandCampaigns = async (): Promise<
       )
     `
     )
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
+    .eq("user_id", brandUserId) // Filter campaigns by the brand's user_id
+    .order("created_at", { ascending: false });
 
-  console.log({ campaigns })
   if (error) {
-    console.error("Brand campaigns error:", error)
-    throw error
+    console.error("Brand campaigns error:", error);
+    throw error;
   }
 
   if (!campaigns) {
-    return []
+    return [];
   }
 
-  // Update status of campaigns with insufficient budget
-  for (const campaign of campaigns) {
-    if (
-      campaign.status === "active" &&
-      Number(campaign.remaining_budget) < 10
-    ) {
-      await supabase
-        .from("campaigns")
-        .update({ status: "inactive" })
-        .eq("id", campaign.id)
-      campaign.status = "inactive" // Update local copy
-    }
-  }
-
-  // Get all creator IDs from submissions
-  const creatorIds = campaigns
-    .flatMap((c) => c.submissions || [])
-    .map((s) => s.user_id)
-    .filter((id): id is string => !!id)
-
-  // Get creator profiles
-  const { data: creators } = await supabase
-    .from("profiles")
-    .select("id, organization_name")
-    .in("id", creatorIds)
   return campaigns.map((campaign) => ({
     id: campaign.id,
     title: campaign.title,
@@ -103,51 +91,58 @@ export const getBrandCampaigns = async (): Promise<
     video_outline: campaign.video_outline,
     status: campaign.status || "",
     brand: {
-      name: profile.organization_name || "",
+      name: brand?.organization_name || "",
       payment_verified: false,
     },
     submission: null,
     submissions: (campaign.submissions || []).map(
-      (submission: {
-        id: string
-        user_id: string
-        video_url: string | null
-        file_path: string | null
-        transcription: string | null
-        status: string
-        created_at: string
-        views: number
-        campaign_id: string
-        auto_moderation_result: {
-          approved: boolean
-          reason: string
-          confidence: number
-        }
+      (submission) => ({
+        id: submission.id,
+        video_url: submission.video_url || "",
+        file_path: submission.file_path,
+        transcription: submission.transcription || "",
+        status: submission.status,
+        campaign_id: campaign.id,
+        creator_id: submission.user_id,
+        created_at: submission.created_at,
+        views: submission.views || 0,
         creator: {
-          profile: {
-            organization_name: string
-          }
-        }
-      }) => {
-        return {
-          id: submission.id,
-          video_url: submission.video_url || "",
-          file_path: submission.file_path,
-          transcription: submission.transcription || "",
-          status: submission.status,
-          campaign_id: campaign.id,
-          creator_id: submission.user_id,
-          created_at: submission.created_at,
-          views: submission.views || 0,
-          creator: {
-            full_name: submission.creator?.profile?.organization_name || "",
-          },
-          auto_moderation_result: submission.auto_moderation_result,
-        }
-      }
+          full_name: submission.creator?.profile?.organization_name || "",
+        },
+        auto_moderation_result: submission.auto_moderation_result,
+      })
     ),
     activeSubmissionsCount: (campaign.submissions || []).filter(
-      (s: { status: string }) => s.status === "active"
+      (s) => s.status === "active"
     ).length,
-  }))
+  }));
+};
+
+
+export async function getBrandCampaigns1(brandId: string) {
+  const supabase = await createServerSupabaseClient();
+
+  // Fetch the brand details (only for owners)
+  const { data: brand, error: brandError } = await supabase
+    .from("brands")
+    .select("*")
+    .eq("id", brandId)
+    .single();
+
+  // Fetch campaigns even if brand is not found (for brand_team users)
+  const { data: campaigns, error: campaignsError } = await supabase
+    .from("campaigns")
+    .select("*, brand:brands(name, payment_verified)")
+    .eq("brand_id", brandId);
+
+  if (campaignsError) {
+    throw new Error("Error fetching campaigns: " + campaignsError.message);
+  }
+
+  // ✅ Only enforce brand profile check for owners (not team members)
+  if (!brand && campaigns.length === 0) {
+    throw new Error("Brand or campaigns not found");
+  }
+
+  return campaigns;
 }

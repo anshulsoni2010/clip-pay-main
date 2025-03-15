@@ -22,12 +22,16 @@ import {
 } from "@/components/ui/dialog"
 import { PaymentMethodDisplay } from "./payment-method"
 import { Switch } from "@/components/ui/switch"
+import { useRouter } from "next/navigation"
+import { InstagramModal } from "@/components/instausermodel"
 
 interface SettingsFormProps {
   email: string
   userType: "creator" | "brand"
   hasStripeAccount: boolean
-  autoApprovalEnabled?: boolean
+  autoApprovalEnabled?: boolean,
+  tittokConnected:Boolean
+  instaConnected:Boolean
 }
 
 export function SettingsForm({
@@ -35,6 +39,8 @@ export function SettingsForm({
   userType,
   hasStripeAccount,
   autoApprovalEnabled = false,
+  tittokConnected,
+  instaConnected
 }: SettingsFormProps) {
   const [newEmail, setNewEmail] = useState("")
   const [confirmEmail, setConfirmEmail] = useState("")
@@ -43,7 +49,13 @@ export function SettingsForm({
   const [emailError, setEmailError] = useState("")
   const [passwordError, setPasswordError] = useState("")
   const [showEmailDialog, setShowEmailDialog] = useState(false)
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [error, setError] = useState<string | null>(null)
+  const [isInstagramModalOpen, setInstagramModalOpen] = useState(false)
+  const [instagramUsername, setInstagramUsername] = useState("")
+ 
+  const [success, setSuccess] = useState<string | null>(null)
+  const router = useRouter()
   const [isAutoApprovalEnabled, setIsAutoApprovalEnabled] =
     useState(autoApprovalEnabled)
 
@@ -69,6 +81,31 @@ export function SettingsForm({
     }
   }
 
+  const handleTikTokAuth = async () => {
+   
+    setError(null)
+
+    try {
+      const response = await fetch("/api/tiktok/auth")
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      if (!data.url) {
+        throw new Error("No authentication URL returned")
+      }
+
+      window.location.href = data.url
+    } catch (err) {
+      console.error("Error initiating TikTok auth:", err)
+      setError(
+        err instanceof Error ? err.message : "Failed to connect with TikTok"
+      )
+
+    }
+  }
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     setPasswordError("")
@@ -91,6 +128,36 @@ export function SettingsForm({
     }
   }
 
+  const handleInstagramSubmit = async () => {
+    setError(null)
+    setSuccess(null)
+  
+    if (!instagramUsername) {
+      setError("Please enter a username.")
+      return
+    }
+  
+    try {
+      const response = await fetch("/api/instagram", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instagramUsername }),
+      })
+  
+      const data = await response.json()
+  
+      if (!response.ok) throw new Error(data.error || "Failed to update")
+  
+      setSuccess("Instagram username updated successfully!")
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 1500)
+      setInstagramModalOpen(false)
+      setInstagramUsername("")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong")
+    }
+  }
   return (
     <div className="divide-y divide-zinc-200">
       {/* Email Section */}
@@ -227,6 +294,45 @@ export function SettingsForm({
         </Dialog>
       </div>
 
+{userType==="creator" && (
+  <>
+
+  <div className="py-6 flex items-center justify-between">
+  <div>
+    <h3 className="text-sm font-medium text-zinc-900">Tittok Account</h3>
+  
+  </div>
+
+   
+      <Button
+       onClick={handleTikTokAuth}
+        className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
+        size="sm"
+      >
+       {tittokConnected ?  "Connected": "Connect Tiktok"}
+      </Button>
+  
+
+</div>
+  <div className="py-6 flex items-center justify-between">
+  <div>
+    <h3 className="text-sm font-medium text-zinc-900">Instagram Account</h3>
+  
+  </div>
+
+   
+      <Button
+         onClick={() => setInstagramModalOpen(true)}
+        className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
+        size="sm"
+      >
+       {instaConnected ?  "Connected": "Connect Instagram"}
+      </Button>
+  
+
+</div>
+</>
+)}
       {/* Auto-Approval Section for Brands */}
       {userType === "brand" && (
         <div className="py-6">
@@ -332,6 +438,11 @@ export function SettingsForm({
           )}
         </div>
       )}
+        <InstagramModal
+              isOpen={isInstagramModalOpen}
+              onClose={() => setInstagramModalOpen(false)}
+              onSubmit={handleInstagramSubmit}
+            />
     </div>
   )
 }

@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { connectYouTubeAccount } from "@/app/actions/auth"
+import { InstagramAuthForm } from "../instagram/instaauth"
 
-export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: string }) {
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * A form to connect a user's TikTok and YouTube accounts.
+ *
+ * @param youtubeAccessToken - The user's YouTube access token, if available.
+ * @returns A JSX element containing a form to connect the user's TikTok and YouTube accounts.
+ */
+/******  fcfd735f-5545-4fbf-8abe-ae449c2d2d66  *******/export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: string }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -115,7 +123,7 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
           </Button>
 
           {/* YouTube Connection */}
-          {isConnected ? (
+          {/* {isConnected ? (
         <Button disabled className="w-full h-11 bg-green-500 text-white">
           ✅ Connected with YouTube
         </Button>
@@ -134,7 +142,8 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
           />
           {isLoading ? "Connecting..." : "Connect YouTube Account"}
         </Button>
-      )}
+      )} */}
+      <InstagramAuthForm/>
           <a href="/dashboard" className="w-full h-11 text-zinc-600 hover:bg-zinc-100">
             Skip for Now
           </a>
@@ -151,6 +160,7 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
           </p>
         </div>
       </div>
+      
     </div>
   )
 }

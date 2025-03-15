@@ -689,13 +689,25 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                     Acknowledge
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => handleProcessPayment(selectedSubmission.id)}
-                    disabled={processingPayment}
-                    className="bg-[#5865F2] dark:bg-[#5865F2] hover:bg-[#4752C4] dark:hover:bg-[#4752C4] text-white dark:text-white"
-                  >
-                    {processingPayment ? "Processing..." : "Process Payment"}
+                  // <Button
+                  //   onClick={() => handleProcessPayment(selectedSubmission.id)}
+                  //   disabled={processingPayment}
+                  //   className="bg-[#5865F2] dark:bg-[#5865F2] hover:bg-[#4752C4] dark:hover:bg-[#4752C4] text-white dark:text-white"
+                  // >
+                  //   {processingPayment ? "Processing..." : "Process Payment"}
+                  // </Button>
+                  <>
+               
+                  <Button>
+                    Process Payment with paypal
                   </Button>
+                  <Button                  onClick={() => handleProcessPayment(selectedSubmission.id)}
+                     disabled={processingPayment}
+                  className="bg-[#5865F2] dark:bg-[#5865F2] hover:bg-[#4752C4] dark:hover:bg-[#4752C4] text-white dark:text-white"
+                   >
+                    Process Payment with Stripe
+                  </Button>
+                  </>
                 )}
               </div>
             </div>

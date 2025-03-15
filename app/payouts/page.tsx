@@ -199,11 +199,9 @@ export default async function PayoutsPage() {
     )
     .eq("status", "approved")
     .eq("campaign.brand.user_id", brand.user_id)
-    .not("video_url", "is", null)
     .lte("payout_due_date", new Date().toISOString())
-    .eq("creator.stripe_account_status", "active")
-    .not("creator.stripe_account_id", "is", null)
-    .gte("views", 10000)
+
+    .gte("views", 1000)
     .order("payout_due_date", { ascending: true })
     .returns<SubmissionQueryResult[]>()
 

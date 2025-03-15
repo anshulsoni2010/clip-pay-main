@@ -47,3 +47,24 @@ export async function PATCH(req: Request) {
     )
   }
 }
+export async function GET(req: Request,res: Response) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const { data, error } = await supabase
+    .from("creators")
+    .select("instagram_username")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  
+  }
+     return NextResponse.json({instagramUsername: data?.instagram_username || "" }, { status: 200})
+
+}

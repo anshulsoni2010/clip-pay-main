@@ -223,40 +223,20 @@ export async function createCampaign({
   brandId: string
 }) {
   const supabase = await createServerSupabaseClient()
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
 
-  if (authError) {
-    console.error("Auth error:", authError)
-    throw new Error("Authentication failed")
-  }
-
-  if (!user) {
-    throw new Error("Not authenticated")
-  }
-
-  const { data: brand } = await supabase
+  // Check if the brand exists and get its user_id
+  const { data: brand, error: brandError } = await supabase
     .from("brands")
-    .select("id, user_id")
-    .eq("user_id", user.id)
+    .select("user_id")
+    .eq("id", brandId)
     .single()
 
-  if (!brand) {
-    console.error("No brand found for user:", user.id)
-    throw new Error("No brand found for user")
+  if (brandError || !brand) {
+    console.error("Invalid brandId, brand does not exist:", brandId)
+    throw new Error("Invalid brandId, brand does not exist")
   }
 
-  if (brand.user_id !== user.id) {
-    console.error(
-      "Brand mismatch. User id:",
-      user.id,
-      "Brand user_id:",
-      brand.user_id
-    )
-    throw new Error("Unauthorized: Brand does not belong to user")
-  }
+  const brandOwnerId = brand.user_id // Get the brand's user_id
 
   // Convert string values to numbers or null
   const numericBudgetPool = budget_pool.trim() ? Number(budget_pool) : null
@@ -297,7 +277,7 @@ export async function createCampaign({
         guidelines,
         video_outline,
         referral_bonus_rate: numericReferralRate,
-        user_id: user.id,
+        user_id: brandOwnerId, // Store brand.user_id in campaigns
         status: "active",
         remaining_budget: numericBudgetPool,
       })

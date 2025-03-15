@@ -23,7 +23,8 @@ export interface Submission {
   transcription: string | null
   user_id: string
   created_at: string
-  views: number
+  views: number,
+  platform?: "TikTok" | "YouTube"; 
   creator: {
     full_name: string | null
     email: string | null
@@ -168,11 +169,11 @@ export const updateVideoViews = async (
 
   // Get all video submissions that need updating (with platform info)
   const videoSubmissions = campaigns
-    .map((campaign) => campaign.submission)
-    .filter(
-      (submission): submission is { video_url: string; platform: string } =>
-        !!submission?.video_url && !!submission?.platform
-    )
+  .map((campaign) => campaign.submission)
+  .filter((submission): submission is Submission =>
+    !!submission?.video_url && !!submission?.platform
+  )
+
 
   if (videoSubmissions.length === 0) return
 
@@ -185,12 +186,14 @@ export const updateVideoViews = async (
         console.log("submission", submission)
         if (submission.platform === "TikTok" && creator.tiktok_access_token) {
           info = await tiktokApi.getVideoInfo(
-            submission.video_url,
+            submission.video_url!,
             creator.tiktok_access_token,
             creator.user_id
           )
         } else if (submission.platform === "YouTube") {
-          info = await YouTubeAPI.getVideoInfo(submission.video_url)
+          if (submission.video_url) {
+            info = await YouTubeAPI.getVideoInfo(submission.video_url)
+          }
         }
 
         return { url: submission.video_url, info }

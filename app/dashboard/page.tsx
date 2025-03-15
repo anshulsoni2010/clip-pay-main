@@ -24,6 +24,7 @@ export interface Submission {
   user_id: string
   created_at: string
   views: number
+  platform?: "TikTok" | "YouTube"
   creator: {
     full_name: string | null
     email: string | null
@@ -90,7 +91,9 @@ export default async function DashboardPage() {
 
   let brandId: string | null = null
   let creator: Creator | null = null
+
   if (profile?.user_type === "brand") {
+    // Get brand ID for brand owner
     const { data: brand } = await supabase
       .from("brands")
       .select("id")
@@ -98,6 +101,15 @@ export default async function DashboardPage() {
       .single()
 
     brandId = brand?.id || null
+  } else if (profile?.user_type === "brand_team") {
+    // Get brand ID for team member
+    const { data: brandTeamMember } = await supabase
+      .from("brand_team_members")
+      .select("brand_id")
+      .eq("user_id", user.id)
+      .single()
+
+    brandId = brandTeamMember?.brand_id || null
   } else {
     // Get creator data if user is a creator
     const { data } = await supabase
@@ -115,21 +127,12 @@ export default async function DashboardPage() {
 
       return (
         <div className="min-h-screen bg-[#313338]">
-          {profile?.user_type === "brand" && brandId ? (
-            <DashboardClient
-              initialCampaigns={await getBrandCampaigns()}
-              brandId={brandId}
-              email={user.email || ""}
-              organization_name={profile.organization_name}
-            />
-          ) : (
-            <CreatorDashboardClient
-              transformedCampaigns={campaigns}
-              email={user.email || ""}
-              creator={creator}
-              organization_name={profile.organization_name}
-            />
-          )}
+          <CreatorDashboardClient
+            transformedCampaigns={campaigns}
+            email={user.email || ""}
+            creator={creator}
+            organization_name={profile.organization_name}
+          />
         </div>
       )
     }
@@ -137,7 +140,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#313338]">
-      {profile?.user_type === "brand" && brandId ? (
+      {brandId ? (
         <DashboardClient
           initialCampaigns={await getBrandCampaigns()}
           brandId={brandId}
@@ -167,7 +170,7 @@ export const updateVideoViews = async (
   const videoSubmissions = campaigns
     .map((campaign) => campaign.submission)
     .filter(
-      (submission): submission is { video_url: string; platform: string } =>
+      (submission): submission is Submission =>
         !!submission?.video_url && !!submission?.platform
     )
 
@@ -182,12 +185,14 @@ export const updateVideoViews = async (
         console.log("submission", submission)
         if (submission.platform === "TikTok" && creator.tiktok_access_token) {
           info = await tiktokApi.getVideoInfo(
-            submission.video_url,
+            submission.video_url!,
             creator.tiktok_access_token,
             creator.user_id
           )
         } else if (submission.platform === "YouTube") {
-          info = await YouTubeAPI.getVideoInfo(submission.video_url)
+          if (submission.video_url) {
+            info = await YouTubeAPI.getVideoInfo(submission.video_url)
+          }
         }
 
         return { url: submission.video_url, info }

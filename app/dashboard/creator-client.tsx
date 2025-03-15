@@ -142,7 +142,8 @@ export function CreatorDashboardClient({
   const [hasNewCampaigns, setHasNewCampaigns] = useState(false)
   const [selectedCampaign, setSelectedCampaign] =
     useState<CreatorCampaign | null>(null)
-  const [videoUrl, setVideoUrl] = useState("")
+  const [videoUrls, setVideoUrls] = useState<string[]>([])
+
   const [updatingUrl, setUpdatingUrl] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -255,10 +256,20 @@ export function CreatorDashboardClient({
   }, [campaigns, selectedCampaign])
 
   useEffect(() => {
-    if (selectedCampaign?.submission?.video_url) {
-      setVideoUrl(selectedCampaign.submission.video_url)
+    if (selectedCampaign?.submission) {
+      console.log("selectedCampaign.submission", selectedCampaign.submission)
+      if (
+        Array.isArray(selectedCampaign.submission.video_urls) &&
+        selectedCampaign.submission.video_urls.length > 0
+      ) {
+        setVideoUrls(selectedCampaign.submission.video_urls)
+      } else if (selectedCampaign.submission.video_url) {
+        setVideoUrls([selectedCampaign.submission.video_url])
+      } else {
+        setVideoUrls([])
+      }
     } else {
-      setVideoUrl("")
+      setVideoUrls([])
     }
     setIsEditing(false)
   }, [selectedCampaign])
@@ -485,7 +496,7 @@ export function CreatorDashboardClient({
                 <VideoUrlInput
                   videoViews={selectedCampaign.submission.views}
                   submissionId={selectedCampaign.submission.id}
-                  currentUrl={selectedCampaign.submission.video_url}
+                  currentUrls={videoUrls} // Pass the updated video URLs array
                   onUpdate={(views) => {
                     // Update the campaigns list with new views
                     setCampaigns((prevCampaigns) => {

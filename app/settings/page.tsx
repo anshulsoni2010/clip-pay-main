@@ -29,16 +29,21 @@ export default async function SettingsPage() {
   // Get creator's Stripe account status if they are a creator
   let hasStripeAccount = false
   let autoApprovalEnabled = false
-
+  let tiktokConnected = false
+  let instaConnected = false
   if (profile.user_type === "creator") {
     const { data: creator } = await supabase
       .from("creators")
-      .select("stripe_account_id, stripe_account_status")
+      .select(
+        "stripe_account_id, stripe_account_status, tiktok_connected,instagram_username"
+      )
       .eq("user_id", user.id)
       .single()
 
     // Only consider the account connected if it's active
     hasStripeAccount = creator?.stripe_account_status === "active"
+    tiktokConnected = creator?.tiktok_connected ?? false
+    instaConnected = !!creator?.instagram_username
   } else if (profile.user_type === "brand") {
     // Get brand's auto-approval setting
     const { data: brand } = await supabase
@@ -76,6 +81,8 @@ export default async function SettingsPage() {
                 userType={profile.user_type as "creator" | "brand"}
                 hasStripeAccount={hasStripeAccount}
                 autoApprovalEnabled={autoApprovalEnabled}
+                tittokConnected={tiktokConnected}
+                instaConnected={instaConnected}
               />
             </div>
           </div>

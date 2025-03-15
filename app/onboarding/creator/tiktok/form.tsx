@@ -5,8 +5,20 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { connectYouTubeAccount } from "@/app/actions/auth"
+import { InstagramAuthForm } from "../instagram/instaauth"
 
-export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: string }) {
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * A form to connect a user's TikTok and YouTube accounts.
+ *
+ * @param youtubeAccessToken - The user's YouTube access token, if available.
+ * @returns A JSX element containing a form to connect the user's TikTok and YouTube accounts.
+ */
+/******  fcfd735f-5545-4fbf-8abe-ae449c2d2d66  *******/ export function TikTokAuthForm({
+  youtubeAccessToken,
+}: {
+  youtubeAccessToken?: string
+}) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -64,8 +76,6 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
   //   }
   // }
 
-
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-8">
       <div className="w-full max-w-[400px] space-y-8">
@@ -115,7 +125,7 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
           </Button>
 
           {/* YouTube Connection */}
-          {isConnected ? (
+          {/* {isConnected ? (
         <Button disabled className="w-full h-11 bg-green-500 text-white">
           ✅ Connected with YouTube
         </Button>
@@ -134,18 +144,28 @@ export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: st
           />
           {isLoading ? "Connecting..." : "Connect YouTube Account"}
         </Button>
-      )}
-          <a href="/dashboard" className="w-full h-11 text-zinc-600 hover:bg-zinc-100">
+      )} */}
+          <InstagramAuthForm />
+          <a
+            href="/dashboard"
+            className="w-full h-11 text-zinc-600 hover:bg-zinc-100"
+          >
             Skip for Now
           </a>
 
           <p className="text-xs text-center text-zinc-500">
             By connecting your account, you agree to our{" "}
-            <a href="/legal/terms" className="text-blue-600 hover:text-blue-800">
+            <a
+              href="/legal/terms"
+              className="text-blue-600 hover:text-blue-800"
+            >
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="/legal/privacy" className="text-blue-600 hover:text-blue-800">
+            <a
+              href="/legal/privacy"
+              className="text-blue-600 hover:text-blue-800"
+            >
               Privacy Policy
             </a>
           </p>

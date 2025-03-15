@@ -18,6 +18,7 @@ import { CampaignWithSubmissions, Submission } from "@/types/campaigns"
 import { CampaignCard } from "./components/campaign-card"
 import { CreateCampaignModal } from "./components/create-campaign-modal"
 import { Metrics } from "./components/metrics"
+import { TeamManagement } from "./TeamManagement"
 
 interface DashboardClientProps {
   initialCampaigns: CampaignWithSubmissions[]
@@ -243,6 +244,7 @@ export function DashboardClient({
       <main className="lg:ml-64 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-8 pt-20 lg:pt-8">
           <Metrics campaigns={campaigns} />
+          {brandId && <TeamManagement brandId={brandId} />}
           <div className="mt-8">
             <div className="flex justify-between items-center mb-6">
               <div>

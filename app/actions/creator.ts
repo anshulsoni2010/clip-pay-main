@@ -130,118 +130,95 @@ export async function updateCreatorProfile(
 
 export async function updateSubmissionVideoUrl(
   submissionId: string,
-  videoUrl: string
+  videoUrls: string[]
 ) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: "Not authenticated" }
+    return { success: false, error: "Not authenticated" };
   }
 
   try {
-    // Determine platform from video URL
-    const isTikTok = videoUrl.includes("tiktok.com")
-    const isYouTube =
-      videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")
+    let validUrls: string[] = [];
+    let platforms: string[] = [];
+    let totalViews = 0;
 
+    for (const videoUrl of videoUrls) {
+      if (!videoUrl.trim()) continue;
+
+      const isTikTok = videoUrl.includes("tiktok.com");
+      const isYouTube = videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
       const isInstagram = videoUrl.includes("instagram.com/reel/");
 
-    if (!isTikTok && !isYouTube&& !isInstagram) {
-      return {
-        success: false,
-        error: "Invalid video URL. Use TikTok or YouTube.",
+      if (!isTikTok && !isYouTube && !isInstagram) {
+        return { success: false, error: "Invalid video URL. Use TikTok, YouTube, or Instagram." };
+      }
+
+      let videoInfo = null;
+
+      if (isTikTok) {
+        platforms.push("TikTok");
+        const { data: creator } = await supabase
+          .from("creators")
+          .select("tiktok_access_token")
+          .eq("user_id", user.id)
+          .single();
+
+        if (!creator?.tiktok_access_token) {
+          return { success: false, error: "TikTok not connected" };
+        }
+
+        const tiktokApi = new TikTokAPI();
+        videoInfo = await tiktokApi.getVideoInfo(videoUrl, creator.tiktok_access_token, user.id);
+      } 
+      
+      else if (isYouTube) {
+        platforms.push("YouTube");
+        videoInfo = await YouTubeAPI.getVideoInfo(videoUrl);
+      } 
+      
+      else if (isInstagram) {
+        platforms.push("Instagram");
+        const views = await getInstagramReelViews(videoUrl);
+        videoInfo = { views };
+      }
+
+      if (videoInfo) {
+        totalViews += videoInfo.views || 0;
+        validUrls.push(videoUrl);
       }
     }
 
-    let videoInfo = null
-
-    if (isTikTok) {
-      // Fetch TikTok access token
-      const { data: creator, error: creatorError } = await supabase
-        .from("creators")
-        .select("tiktok_access_token")
-        .eq("user_id", user.id)
-        .single()
-
-      if (creatorError || !creator?.tiktok_access_token) {
-        return { success: false, error: "TikTok not connected" }
-      }
-
-      // Get video info from TikTok API
-      const tiktokApi = new TikTokAPI()
-      videoInfo = await tiktokApi.getVideoInfo(
-        videoUrl,
-        creator.tiktok_access_token,
-        user.id
-      )
-    } else if (isYouTube) {
-      // Use YouTube Data API to fetch video details
-      videoInfo = await YouTubeAPI.getVideoInfo(videoUrl) // ✅ Use YouTubeAPI from the new file
+    if (validUrls.length === 0) {
+      return { success: false, error: "No valid video URLs provided." };
     }
 
-    else if (isInstagram) {
-      // Fetch Instagram Reel views from Apify
-      const views = await getInstagramReelViews(videoUrl);
-      videoInfo = { views };
-    }
-
-    if (!videoInfo) {
-      return { success: false, error: "Could not fetch video information" }
-    }
-
-    // Get submission and campaign details
-    const { data: submission, error: submissionError } = await supabase
-      .from("submissions")
-      .select("id, campaign:campaigns!inner ( created_at )")
-      .eq("id", submissionId)
-      .single()
-
-    if (submissionError || !submission) {
-      throw submissionError || new Error("Submission not found")
-    }
-
-    // Compare video creation time with campaign creation date
-    const videoCreateTime = new Date(videoInfo.create_time * 1000) // Convert Unix timestamp to Date
-    const campaignCreateTime = new Date(submission.campaign.created_at)
-
-    if (videoCreateTime < campaignCreateTime) {
-      return {
-        success: false,
-        error:
-          "Video was created before the campaign was created. Please submit a video that was created after joining the campaign.",
-      }
-    }
-
-    // Update the submission with video URL and views
     const { data: updatedSubmission, error: updateError } = await supabase
       .from("submissions")
       .update({
-        video_url: videoUrl,
-        views: videoInfo.views,
-        platform: isTikTok ? "TikTok" : isYouTube ? "YouTube" : "Instagram",
+        video_urls: validUrls,
+        views: totalViews,
+        platforms: platforms,
       })
       .eq("id", submissionId)
       .eq("user_id", user.id)
       .select()
-      .single()
+      .single();
 
     if (updateError) {
-      throw updateError
+      throw updateError;
     }
 
-    revalidatePath("/submissions")
-    revalidatePath("/dashboard")
-
-    return { success: true, views: videoInfo.views }
+    return { success: true, views: totalViews };
   } catch (error) {
-    console.error("Error in updateSubmissionVideoUrl:", error)
+    console.error("Error in updateSubmissionVideoUrl:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to update submission",
-    }
+      error: error instanceof Error ? error.message : "Failed to update submission",
+    };
   }
 }
+

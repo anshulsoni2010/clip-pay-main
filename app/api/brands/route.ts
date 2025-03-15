@@ -167,8 +167,9 @@ async function sendEmailNotification(email: string) {
           <h1>You've been added to the team!</h1>
           <p>Hello,</p>
           <p>You have been successfully added to the team. You can now log in and start collaborating.</p>
+          <a href="https://www.clippay.live/signin">Accept Invite</a>
           <p>Best regards,</p>
-          <p>Your Company</p>
+          <p>ClipPay</p>
         `,
       }),
     });

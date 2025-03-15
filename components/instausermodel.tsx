@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { createServerSupabaseClient } from "@/lib/supabase-server"
 
 interface InstagramModalProps {
   isOpen: boolean
@@ -11,6 +12,28 @@ export function InstagramModal({ isOpen, onClose, onSubmit }: InstagramModalProp
   const [instagramUsername, setInstagramUsername] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  
+ 
+  const [isLoading, setIsLoading] = useState(true)
+  useEffect(() => {
+    const fetchInstagramUsername = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/instagram");
+        const data = await response.json();
+        if (data.instagramUsername) {
+          setInstagramUsername(data.instagramUsername);
+        }
+      } catch (err) {
+        setError("Failed to fetch username.");
+      }
+      setIsLoading(false);
+    };
+  
+    fetchInstagramUsername();
+  }, []);
+  
 
   const handleSubmit = () => {
     setError(null)

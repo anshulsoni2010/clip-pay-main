@@ -212,7 +212,25 @@ export function SignUpForm({ userType }: SignUpFormProps) {
               </button>
             </InputWrapper>
           </div>
-
+          {userType==="creator" && (  <div className="space-y-2">
+            <Label
+              htmlFor="referralCode"
+              className="text-sm font-medium text-[#1D2939]"
+            >
+             Referral Code
+            </Label>
+            <InputWrapper>
+              <Input
+                id="referralCode"
+                name="referralCode"
+                type="text"
+                className="h-11 border-[#CBD5E1] focus:border-[#5865F2] focus:shadow-[0_0_0_1px_rgba(88,101,242,0.2)] focus:ring-0 text-[#1D2939]"
+                placeholder="Referral Code (optional)"
+                required
+              />
+            </InputWrapper>
+          </div>)}
+        
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button

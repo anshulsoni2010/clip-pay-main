@@ -65,7 +65,7 @@ export async function signUp(formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const userType = formData.get("userType") as "creator" | "brand"
-
+  const referralCode = formData.get("referralCode") as string | null
   if (!email || !password || !userType) {
     throw new Error("Missing required fields")
   }
@@ -75,6 +75,7 @@ export async function signUp(formData: FormData) {
   const { error } = await supabase.auth.signUp({
     email,
     password,
+    referralCode,
     options: {
       emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/${userType}/callback`,
     },

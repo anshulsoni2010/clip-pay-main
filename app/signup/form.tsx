@@ -8,6 +8,7 @@ import Link from "next/link"
 import { signUp, signInWithGoogle } from "../actions/auth"
 import Image from "next/image"
 import { CheckCircle2, Eye, EyeOff } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
 type UserType = "creator" | "brand"
 
@@ -51,6 +52,10 @@ interface SignUpFormProps {
 
 export function SignUpForm({ userType }: SignUpFormProps) {
   const formId = useId()
+  const searchParams = useSearchParams();
+  const referralCodeFromURL = searchParams.get("ref") || ""; // Get referral code from URL
+
+  const [referralCode, setReferralCode] = useState(referralCodeFromURL);
   const [isSigningUp, setIsSigningUp] = useState(false)
   const [isGoogleSigningUp, setIsGoogleSigningUp] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -65,7 +70,7 @@ export function SignUpForm({ userType }: SignUpFormProps) {
 
     const formData = new FormData(e.target as HTMLFormElement)
     formData.append("userType", userType)
-
+    formData.append("referralCode", referralCode); 
     try {
       const result = await signUpAction(null, formData)
       if (result.success) {
@@ -212,27 +217,8 @@ export function SignUpForm({ userType }: SignUpFormProps) {
               </button>
             </InputWrapper>
           </div>
-          {userType==="creator" && (  <div className="space-y-2">
-            <Label
-              htmlFor="referralCode"
-              className="text-sm font-medium text-[#1D2939]"
-            >
-             Referral Code
-            </Label>
-            <InputWrapper>
-              <Input
-                id="referralCode"
-                name="referralCode"
-                type="text"
-                className="h-11 border-[#CBD5E1] focus:border-[#5865F2] focus:shadow-[0_0_0_1px_rgba(88,101,242,0.2)] focus:ring-0 text-[#1D2939]"
-                placeholder="Referral Code (optional)"
-                required
-              />
-            </InputWrapper>
-          </div>)}
-        
+          
           {error && <p className="text-sm text-red-500">{error}</p>}
-
           <Button
             type="submit"
             className="w-full h-11 bg-[#5865F2] hover:bg-[#4752C4] dark:bg-[#5865F2] dark:hover:bg-[#4752C4] text-white dark:text-white"
@@ -253,40 +239,30 @@ export function SignUpForm({ userType }: SignUpFormProps) {
           </div>
 
           <Button
-            type="button"
-            variant="outline"
-            className="w-full h-11 dark:text-white border-[#CBD5E1] hover:border-[#5865F2] text-[#1D2939] hover:text-[#5865F2] hover:bg-transparent"
-            onClick={async () => {
-              try {
-                setIsGoogleSigningUp(true)
-                setError(null)
-                const url = await signInWithGoogle(userType)
-                if (url) {
-                  window.location.assign(url)
-                } else {
-                  throw new Error("No authentication URL returned")
-                }
-              } catch (error) {
-                console.error("Google sign in error:", error)
-                setError(
-                  error instanceof Error
-                    ? error.message
-                    : "Failed to sign in with Google"
-                )
-                setIsGoogleSigningUp(false)
-              }
-            }}
-            disabled={isGoogleSigningUp}
-          >
-            <Image
-              src="/google.png"
-              alt="Google"
-              width={20}
-              height={20}
-              className="mr-2"
-            />
-            {isGoogleSigningUp ? "Connecting..." : "Sign up with Google"}
-          </Button>
+  type="button"
+  variant="outline"
+  className="w-full h-11 dark:text-white border-[#CBD5E1] hover:border-[#5865F2] text-[#1D2939] hover:text-[#5865F2] hover:bg-transparent"
+  onClick={async () => {
+    try {
+      setIsGoogleSigningUp(true);
+      setError(null);
+      const url = await signInWithGoogle(userType, true, referralCode)
+      if (url) {
+        window.location.assign(url);
+      } else {
+        throw new Error("No authentication URL returned");
+      }
+    } catch (error) {
+      console.error("Google sign in error:", error);
+      setError(error instanceof Error ? error.message : "Failed to sign in with Google");
+      setIsGoogleSigningUp(false);
+    }
+  }}
+  disabled={isGoogleSigningUp}
+>
+  <Image src="/google.png" alt="Google" width={20} height={20} className="mr-2" />
+  {isGoogleSigningUp ? "Connecting..." : "Sign up with Google"}
+</Button>
 
           <p className="text-center text-sm text-zinc-600">
             Already have an account?{" "}

@@ -213,6 +213,8 @@ export async function createCampaign({
   video_outline,
   referral_bonus_rate,
   brandId,
+  community_link,
+ 
 }: {
   title: string
   budget_pool: string
@@ -221,6 +223,8 @@ export async function createCampaign({
   video_outline: string
   referral_bonus_rate: string
   brandId: string
+  community_link:string
+  example_video_url:string
 }) {
   const supabase = await createServerSupabaseClient()
 
@@ -280,6 +284,7 @@ export async function createCampaign({
         user_id: brandOwnerId, // Store brand.user_id in campaigns
         status: "active",
         remaining_budget: numericBudgetPool,
+        community_link,
       })
       .select()
       .single()

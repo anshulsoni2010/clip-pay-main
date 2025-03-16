@@ -67,7 +67,8 @@ export async function signUp(formData: FormData) {
   const password = formData.get("password") as string
   const userType = formData.get("userType") as "creator" | "brand"
   const referralCode = formData.get("referralCode") as string | null
-
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const redirectUrl = new URL(`/auth/${userType}/callback`, baseUrl);
   if (!email || !password || !userType) {
     throw new Error("Missing required fields")
   }
@@ -80,13 +81,11 @@ export async function signUp(formData: FormData) {
 
   // Store referral code using service role (bypassing RLS)
   if (userType === "creator" && referralCode) {
-    const { error: referralError } = await serviceSupabase
-      .from("pending_referrals")
-      .upsert({ email, referral_code: referralCode })
+    // const { error: referralError } = await serviceSupabase
+    //   .from("pending_referrals")
+    //   .upsert({ email, referral_code: referralCode })
 
-    if (referralError) {
-      console.error("Error storing referral code:", referralError)
-    }
+    redirectUrl.searchParams.set("ref", referralCode);
   }
 
   // Proceed with signup
@@ -94,7 +93,7 @@ export async function signUp(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/${userType}/callback`,
+      emailRedirectTo: redirectUrl.toString(),
     },
   })
 
@@ -164,36 +163,47 @@ export async function resetPassword(password: string) {
   }
 }
 
-export async function signInWithGoogle(userType: "creator" | "brand") {
-  const supabase = await createServerActionClient()
+export async function signInWithGoogle(userType: "creator" | "brand", isSignUp: boolean, referralCode?: string) {
+  const supabase = await createServerActionClient();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  // Use the exact URL pattern that matches Supabase configuration
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-  const redirectUrl = new URL(`/auth/${userType}/callback`, baseUrl)
+  console.log("referral code",referralCode);
+  // 🔹 Create the redirect URL dynamically
+  const redirectUrl = new URL(`/auth/${userType}/callback`, baseUrl);
 
+  // ✅ If this is a signup and a referral code exists, attach it to the redirect URL
+  if (isSignUp && referralCode) {
+    redirectUrl.searchParams.set("ref", referralCode);
+  }
+
+  console.log("Redirecting to Google with URL:", redirectUrl.toString());
+
+  // 🔹 Proceed with Google OAuth
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: redirectUrl.toString(),
+      redirectTo: redirectUrl.toString(), // ✅ This URL now contains the referral code
       queryParams: {
         access_type: "offline",
         prompt: "consent",
       },
     },
-  })
+  });
 
   if (error) {
-    console.error("Google sign in error:", error)
-    throw error
+    console.error("Google sign-in error:", error);
+    throw error;
   }
 
   if (data?.url) {
-    console.log("data ",data?.url);
-    return data.url
+    console.log("data , url",data.url);
+    return data.url;
   }
 
-  throw new Error("No authentication URL returned")
+  throw new Error("No authentication URL returned");
 }
+
+
 
 export async function connectYouTubeAccount() {
   const supabase = await createServerActionClient()

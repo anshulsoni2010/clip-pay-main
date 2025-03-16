@@ -15,83 +15,63 @@ function getProjectRef() {
 
 export const dynamic = "force-dynamic"
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ userType: string }> }
-) {
-  const requestUrl = new URL(request.url)
+export async function GET(request: NextRequest, context: { params: { userType: string } }) {
+  const { params } = context;
+  const userType = params.userType; // ✅ Fix for params issue
 
-  // Get and validate user type
-  const { userType } = await params
+  const requestUrl = new URL(request.url);
+  console.log("Received OAuth Callback:", requestUrl.toString());
 
-  if (!userType || !["creator", "brand"].includes(userType)) {
-    console.error("Invalid user type:", userType)
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Invalid user type")}`
-    )
-  }
-
-  const code = requestUrl.searchParams.get("code")
-  const next = requestUrl.searchParams.get("next") || "/dashboard"
+  const code = requestUrl.searchParams.get("code");
+  const next = requestUrl.searchParams.get("next") || "/dashboard";
+  const referralCode = requestUrl.searchParams.get("ref"); // ✅ Extract referral code
+  console.log("Extracted Referral Code:", referralCode);
 
   if (!code) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=No code provided`
-    )
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=No code provided`);
   }
 
-  const supabase = await createServerActionClient()
+  const supabase = await createServerActionClient();
 
   try {
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error("Session exchange error:", error)
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent(error.message)}`
-      )
+      console.error("Session exchange error:", error);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent(error.message)}`);
     }
 
-    const userId = data.session.user.id
-    const userEmail = data.session.user.email
-    const accessToken = data.session.provider_token
-    const refreshToken = data.session.provider_refresh_token
-
-    let referredByUUID = null
+    const userId = data.session.user.id;
+    const userEmail = data.session.user.email;
+    const accessToken = data.session.provider_token;
+    const refreshToken = data.session.provider_refresh_token;
 
     if (!userEmail) {
-      console.log("⚠️ User is not authenticated or email is missing!");
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Authentication required")}`
-      );
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=Authentication required`);
     }
-    console.log("USer E mail", userEmail);
-    // Retrieve referral code from `pending_referrals`
-    if (userType === "creator") {
-      const { data: referralRecord, error: referralFetchError } = await supabase
-      .from("pending_referrals")
-      .select("referral_code")
-      .eq("email", userEmail.trim().toLowerCase())
-      .single();
-    
 
-        console.log("referralRecord", referralRecord)
-      if (!referralFetchError && referralRecord?.referral_code) {
-        // Fetch referrer's UUID from `referrals` table
-        const { data: referrer, error: referrerFetchError } = await supabase
-          .from("referrals")
-          .select("profile_id")
-          .eq("code", referralRecord.referral_code)
-          .single()
+    console.log("User Email:", userEmail);
+    console.log("Referral Code from URL:", referralCode);
 
-          console.log("referrer", referrer)
-        if (!referrerFetchError) {
-          referredByUUID = referrer.profile_id;
-        }
+    let referredByUUID = null;
+
+    // ✅ Fetch referrer if referral code exists
+    if (userType === "creator" && referralCode) {
+      const { data: referrer, error: referrerFetchError } = await supabase
+        .from("referrals")
+        .select("profile_id")
+        .eq("code", referralCode)
+        .single();
+
+      console.log("Referrer:", referrer);
+      console.log("Referrer Fetch Error:", referrerFetchError);
+
+      if (!referrerFetchError && referrer?.profile_id) {
+        referredByUUID = referrer.profile_id;
       }
     }
 
-    // Store YouTube tokens if user is a creator
+    // ✅ Store YouTube tokens if user is a creator
     if (userType === "creator" && accessToken && refreshToken) {
       await supabase
         .from("creators")
@@ -100,45 +80,57 @@ export async function GET(
           youtube_refresh_token: refreshToken,
           youtube_connected: true,
         })
-        .eq("user_id", userId)
+        .eq("user_id", userId);
     }
 
-    // Fetch or create the user profile
+    // ✅ Fetch user profile
     const { data: existingProfile } = await supabase
       .from("profiles")
-      .select("user_type, onboarding_completed")
+      .select("user_type, onboarding_completed, referred_by")
       .eq("user_id", userId)
-      .single()
+      .single();
 
+    console.log("Existing Profile:", existingProfile);
+
+    console.log("Reffered by  :",referredByUUID);
     if (!existingProfile) {
-      await supabase.from("profiles").insert({
+      // ✅ Insert new profile with referral if applicable
+      console.log(`Inserting new profile for ${userId}, referred by ${referredByUUID}`);
+      const { error: insertError } = await supabase.from("profiles").insert({
         user_id: userId,
         user_type: userType,
         onboarding_completed: false,
-        referred_by: referredByUUID, // Store referrer UUID if applicable
-      })
+        referred_by: referredByUUID || null, // ✅ Store referral only if available
+      });
+
+      if (insertError) {
+        console.error("Error inserting profile:", insertError);
+      }
+    } else if (!existingProfile.referred_by && referredByUUID) {
+      // ✅ Update `referred_by` only if it's missing
+      console.log(`Updating referred_by for user ${userId} -> ${referredByUUID}`);
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ referred_by: referredByUUID })
+        .eq("user_id", userId);
+
+      if (updateError) {
+        console.error("Error updating referred_by:", updateError);
+      }
     }
 
-    // Delete referral record after use
-    await supabase.from("pending_referrals").delete().eq("email", userEmail)
-
-    // Determine redirect URL
-    const profile = existingProfile || {
-      user_type: userType,
-      onboarding_completed: false,
-    }
-    const onboardingPath =
-      profile.user_type === "brand" ? "brand/profile" : "creator"
+    // ✅ Ensure redirect URL is properly formatted
+    const profile = existingProfile || { user_type: userType, onboarding_completed: false };
+    const onboardingPath = profile.user_type === "brand" ? "brand/profile" : "creator";
     const redirectUrl = !profile.onboarding_completed
       ? `${process.env.NEXT_PUBLIC_BASE_URL}/onboarding/${onboardingPath}`
-      : `${process.env.NEXT_PUBLIC_BASE_URL}${next}`
+      : `${process.env.NEXT_PUBLIC_BASE_URL}${next}`;
 
-    const response = NextResponse.redirect(redirectUrl)
-    return response
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
-    console.error("Auth error:", error)
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Authentication failed")}`
-    )
+    console.error("Auth error:", error);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Authentication failed")}`);
   }
 }
+
+

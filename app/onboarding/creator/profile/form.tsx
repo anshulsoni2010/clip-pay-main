@@ -23,7 +23,6 @@ export function ProfileForm() {
     try {
       const result = await updateCreatorProfile(
         organizationName,
-        referralCode || null
       )
 
       if (result.success) {
@@ -78,7 +77,7 @@ export function ProfileForm() {
             />
           </div>
 
-          <div className="space-y-2.5">
+          {/* <div className="space-y-2.5">
             <Label
               htmlFor="referralCode"
               className="text-sm font-medium text-[#1D2939]"
@@ -92,7 +91,7 @@ export function ProfileForm() {
               className="h-11 border-[#CBD5E1] focus:border-[#5865F2] focus:shadow-[0_0_0_1px_rgba(88,101,242,0.2)] focus:ring-0 bg-white text-black placeholder:text-[#475467]"
               placeholder="Enter referral code if you have one"
             />
-          </div>
+          </div> */}
 
           <Button
             type="submit"

@@ -309,7 +309,11 @@ async function processVideo(
   try {
     // Create unique names for the audio file
     const audioFileName = `${userId}_${Date.now()}.wav` // Changed to WAV for better quality
-    const audioPath = join("/tmp", audioFileName)
+    const audioPath = join(
+      // process.cwd(), # uncomment for local development
+      "/tmp",
+      audioFileName
+    )
 
     // Extract audio using ffmpeg with improved parameters
     const ffmpegCommand = `ffmpeg -i "${videoPath}" -vn -acodec pcm_s16le -ar 44100 -ac 2 -af "volume=1.5" "${audioPath}"`
@@ -403,6 +407,7 @@ export async function submitVideo({
     if (file) {
       // First save the file temporarily
       const tempVideoPath = join(
+        // process.cwd(),# uncomment for local development
         "/tmp",
         `${user.id}_${Date.now()}_${file.name}`
       )

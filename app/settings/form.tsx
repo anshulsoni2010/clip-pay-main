@@ -32,6 +32,7 @@ interface SettingsFormProps {
   autoApprovalEnabled?: boolean
   tittokConnected: Boolean
   instaConnected: Boolean
+  hasPaypalAccount: boolean
 }
 
 export function SettingsForm({
@@ -41,6 +42,7 @@ export function SettingsForm({
   autoApprovalEnabled = false,
   tittokConnected,
   instaConnected,
+  hasPaypalAccount,
 }: SettingsFormProps) {
   const [newEmail, setNewEmail] = useState("")
   const [confirmEmail, setConfirmEmail] = useState("")
@@ -397,7 +399,7 @@ export function SettingsForm({
               <h3 className="text-sm font-medium text-zinc-900">
                 Payment Settings
               </h3>
-              {hasStripeAccount ? (
+              {hasPaypalAccount ? (
                 <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-xs font-medium">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   Connected
@@ -412,7 +414,7 @@ export function SettingsForm({
               Manage your bank account for receiving payments
             </p>
           </div>
-          {hasStripeAccount ? (
+          {hasPaypalAccount ? (
             <Button
               className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
               size="sm"
@@ -424,7 +426,7 @@ export function SettingsForm({
             <Button
               className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
               size="sm"
-              onClick={() => (window.location.href = "/api/stripe/connect")}
+              onClick={() => (window.location.href = "/api/paypal/connect")}
             >
               Connect bank
             </Button>

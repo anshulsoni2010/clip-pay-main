@@ -177,7 +177,7 @@ export function EarningsClient({
                     {submission.brand_name}
                   </p>
                   <p className="text-xs text-zinc-500">
-                    {new Date(submission.created_at).toLocaleDateString()}
+                    {new Date(submission.created_at).toDateString()}
                   </p>
                 </div>
                 <div className="text-right">

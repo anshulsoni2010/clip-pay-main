@@ -36,14 +36,16 @@ export async function GET(req: NextRequest) {
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET!
   const redirectUri = process.env.PAYPAL_REDIRECT_URI!
   const PAYPAL_API_BASE =
-    process.env.PAYPAL_MODE === "live" ? "https://api-m.paypal.com" : ""
+    process.env.PAYPAL_MODE === "live"
+      ? "https://api-m.paypal.com"
+      : "https://api-m.sandbox.paypal.com"
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64")
 
   try {
     // Exchange authorization code for access token
     const tokenResponse = await fetch(
-      `https://api-m${process.env.PAYPAL_MODE === "sandbox" ? ".sandbox" : ""}.sandbox.paypal.com/v1/oauth2/token`,
+      `https://api-m${process.env.PAYPAL_MODE === "sandbox" ? ".sandbox" : ""}.paypal.com/v1/oauth2/token`,
       {
         method: "POST",
         headers: {

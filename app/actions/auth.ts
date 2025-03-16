@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation"
 import { createServerActionClient } from "../auth/actions"
 import { url } from "inspector"
+import { createClient } from "@supabase/supabase-js"
 
 export async function signIn(formData: FormData) {
   const email = formData.get("email") as string
@@ -66,16 +67,32 @@ export async function signUp(formData: FormData) {
   const password = formData.get("password") as string
   const userType = formData.get("userType") as "creator" | "brand"
   const referralCode = formData.get("referralCode") as string | null
+
   if (!email || !password || !userType) {
     throw new Error("Missing required fields")
   }
 
   const supabase = await createServerActionClient()
+  const serviceSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY! // Uses service role for unrestricted access
+  )
 
+  // Store referral code using service role (bypassing RLS)
+  if (userType === "creator" && referralCode) {
+    const { error: referralError } = await serviceSupabase
+      .from("pending_referrals")
+      .upsert({ email, referral_code: referralCode })
+
+    if (referralError) {
+      console.error("Error storing referral code:", referralError)
+    }
+  }
+
+  // Proceed with signup
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    referralCode,
     options: {
       emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/${userType}/callback`,
     },
@@ -87,6 +104,7 @@ export async function signUp(formData: FormData) {
 
   return { success: true }
 }
+
 
 export async function signOut() {
   try {

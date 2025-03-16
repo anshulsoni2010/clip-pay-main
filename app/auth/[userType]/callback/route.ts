@@ -21,7 +21,7 @@ export async function GET(
 ) {
   const requestUrl = new URL(request.url)
 
-  // Get and validate user type from URL params
+  // Get and validate user type
   const { userType } = await params
 
   if (!userType || !["creator", "brand"].includes(userType)) {
@@ -53,56 +53,76 @@ export async function GET(
     }
 
     const userId = data.session.user.id
+    const userEmail = data.session.user.email
     const accessToken = data.session.provider_token
     const refreshToken = data.session.provider_refresh_token
 
+    let referredByUUID = null
+
+    if (!userEmail) {
+      console.log("⚠️ User is not authenticated or email is missing!");
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Authentication required")}`
+      );
+    }
+    console.log("USer E mail", userEmail);
+    // Retrieve referral code from `pending_referrals`
+    if (userType === "creator") {
+      const { data: referralRecord, error: referralFetchError } = await supabase
+      .from("pending_referrals")
+      .select("referral_code")
+      .eq("email", userEmail.trim().toLowerCase())
+      .single();
+    
+
+        console.log("referralRecord", referralRecord)
+      if (!referralFetchError && referralRecord?.referral_code) {
+        // Fetch referrer's UUID from `referrals` table
+        const { data: referrer, error: referrerFetchError } = await supabase
+          .from("referrals")
+          .select("profile_id")
+          .eq("code", referralRecord.referral_code)
+          .single()
+
+          console.log("referrer", referrer)
+        if (!referrerFetchError) {
+          referredByUUID = referrer.profile_id;
+        }
+      }
+    }
+
+    // Store YouTube tokens if user is a creator
     if (userType === "creator" && accessToken && refreshToken) {
-      const { error: storeError } = await supabase
+      await supabase
         .from("creators")
         .update({
           youtube_access_token: accessToken,
           youtube_refresh_token: refreshToken,
           youtube_connected: true,
         })
-        .eq("user_id", userId) // ✅ Use user_id if it's the primary key
-
-      if (storeError) {
-        console.error("Error storing YouTube tokens:", storeError)
-      } else {
-        console.log("YouTube tokens stored successfully!")
-      }
+        .eq("user_id", userId)
     }
 
     // Fetch or create the user profile
-    const { data: existingProfile, error: fetchError } = await supabase
+    const { data: existingProfile } = await supabase
       .from("profiles")
       .select("user_type, onboarding_completed")
       .eq("user_id", userId)
       .single()
 
-    if (fetchError && fetchError.code !== "PGRST116") {
-      console.error("Failed to fetch profile:", fetchError)
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Failed to fetch user profile")}`
-      )
-    }
-
     if (!existingProfile) {
-      const { error: insertError } = await supabase.from("profiles").insert({
+      await supabase.from("profiles").insert({
         user_id: userId,
         user_type: userType,
         onboarding_completed: false,
+        referred_by: referredByUUID, // Store referrer UUID if applicable
       })
-
-      if (insertError) {
-        console.error("Failed to create profile:", insertError)
-        return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Failed to create user profile")}`
-        )
-      }
     }
 
-    // Determine redirect URL based on the profile's user type
+    // Delete referral record after use
+    await supabase.from("pending_referrals").delete().eq("email", userEmail)
+
+    // Determine redirect URL
     const profile = existingProfile || {
       user_type: userType,
       onboarding_completed: false,
@@ -114,17 +134,6 @@ export async function GET(
       : `${process.env.NEXT_PUBLIC_BASE_URL}${next}`
 
     const response = NextResponse.redirect(redirectUrl)
-
-    // Set the auth cookie
-    const cookieName = `sb-${getProjectRef()}-auth-token`
-    response.cookies.set(cookieName, JSON.stringify(data.session), {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "development",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
     return response
   } catch (error) {
     console.error("Auth error:", error)

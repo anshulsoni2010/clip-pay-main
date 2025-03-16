@@ -144,7 +144,7 @@ import { InstagramAuthForm } from "../instagram/instaauth"
         </Button>
       )} */}
       <InstagramAuthForm/>
-          <a href="/dashboard" className="w-full h-11 text-zinc-600 hover:bg-zinc-100">
+          <a href="/onboarding/creator/profile" className="w-full h-11 text-zinc-600 hover:bg-zinc-100">
             Skip for Now
           </a>
 

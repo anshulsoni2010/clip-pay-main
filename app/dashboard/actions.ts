@@ -485,9 +485,9 @@ export async function submitVideo({
       views: submission.views,
       transcription: submission.transcription,
       creator: {
-        organization_name:
-          submission.creator[0]?.profiles[0]?.organization_name || null,
+        organization_name: submission.creator[0]?.profiles[0]?.organization_name || null,
       },
+      video_urls: null
     }
 
     revalidatePath("/dashboard")
@@ -682,7 +682,7 @@ export const markNotificationAsSeen = async (notificationId: string) => {
 
 // Create a new server action that wraps the original function
 export async function updateSubmissionVideoUrl(
-  submissionId: string,
+  submissionId: string[],
   videoUrl: string
 ) {
   return updateVideo(submissionId, videoUrl)

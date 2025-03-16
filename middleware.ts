@@ -99,38 +99,24 @@ export async function middleware(req: NextRequest) {
     
     console.log("creatore",creator);
     // If no creator record or TikTok not connected, redirect to TikTok auth
-    if (!creator ) {
-      // Create creator record if it doesn't exist
-      if (!creator) {
-        
-        const { error } = await supabase
-          .from("creators")
-          .insert({ user_id: user.id, tiktok_connected: false })
-        if (error) {
-          console.error("Error creating creator record:", error)
-        }
-      }
-      
-      const response = NextResponse.redirect(new URL('/onboarding/creator/tiktok', req.url))
-      
-      return response
-    }
-    
-    // If TikTok is connected but no organization name, handle profile setup
-    // if (!profile.organization_name) {
-    //   // Allow access if already on profile setup page
-    //   if (currentPath === '/onboarding/creator/profile') {
-        
-    //     const response = NextResponse.next()
-        
-    //     return response
-    //   }
-      
-      
-    //   const response = NextResponse.redirect(new URL('/onboarding/creator/profile', req.url))
-      
-    //   return response
-    // }
+ // Ensure a creator record exists
+if (!creator) {
+  const { error } = await supabase
+    .from("creators")
+    .insert({ user_id: user.id, tiktok_connected: false })
+  if (error) {
+    console.error("Error creating creator record:", error)
+  }
+}
+
+console.log("profil",profile);
+// Always redirect to profile setup if organization_name is missing
+if (!profile.organization_name && !currentPath.startsWith("/onboarding/creator/profile")) {
+  console.log("Redirecting to /onboarding/creator/profile");
+  return NextResponse.redirect(new URL('/onboarding/creator/profile', req.url));
+}
+
+
 
     // If we get here, all onboarding steps are complete
     

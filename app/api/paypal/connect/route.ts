@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
 export async function GET() {
-  const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID!
+  const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!
   const PAYPAL_REDIRECT_URI = encodeURIComponent(
     `${process.env.PAYPAL_REDIRECT_URI}`
   )

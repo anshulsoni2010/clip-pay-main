@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const supabase = await createServerComponentClient()
+  const supabase = await createServerSupabaseClient()
 
   // Fetch the logged-in user
   const {
@@ -32,30 +32,31 @@ export async function GET(req: NextRequest) {
 
   console.log("Authenticated Supabase User:", user)
 
-  const clientId = process.env.PAYPAL_CLIENT_ID!
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET!
   const redirectUri = process.env.PAYPAL_REDIRECT_URI!
   const PAYPAL_API_BASE =
-    process.env.PAYPAL_MODE === "live"
-      ? "https://api-m.paypal.com"
-      : "https://api-m.sandbox.paypal.com"
+    process.env.PAYPAL_MODE === "live" ? "https://api-m.paypal.com" : ""
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64")
 
   try {
     // Exchange authorization code for access token
-    const tokenResponse = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: redirectUri,
-      }),
-    })
+    const tokenResponse = await fetch(
+      `https://api-m${process.env.PAYPAL_MODE === "sandbox" ? ".sandbox" : ""}.sandbox.paypal.com/v1/oauth2/token`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: redirectUri,
+        }),
+      }
+    )
 
     const tokenData = await tokenResponse.json()
     console.log("PayPal Token Data:", tokenData)
@@ -82,8 +83,9 @@ export async function GET(req: NextRequest) {
 
     // Extract email correctly
     const email =
-      userInfo.emails?.find((e) => e.primary)?.value ||
-      userInfo.emails?.[0]?.value
+      userInfo.emails?.find(
+        (e: { primary: boolean; value: string }) => e.primary
+      )?.value || userInfo.emails?.[0]?.value
 
     if (!email) {
       return NextResponse.json(

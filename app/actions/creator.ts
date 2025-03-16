@@ -100,7 +100,17 @@ export async function updateSubmissionVideoUrl(
       
       else if (isInstagram) {
         platforms.push("Instagram");
-        const views = await getInstagramReelViews(videoUrl);
+        const { data: creator } = await supabase
+        .from("creators")
+        .select("instagram_username")
+        .eq("user_id", user.id)
+        .single();
+
+        if (!creator?.instagram_username) {
+          return { success: false, error: "Instagram not connected" };
+        }
+
+        const views = await getInstagramReelViews(videoUrl,creator.instagram_username);
         videoInfo = { views };
       }
 

@@ -1,4 +1,4 @@
-export async function getInstagramReelViews(videoUrl: string,username: string): Promise<number> {
+export async function getInstagramReelViews(videoUrl: string, username: string): Promise<number> {
     const APIFY_API_KEY = process.env.APIFY_API_KEY;
     const APIFY_ACTOR_ID = "apify~instagram-reel-scraper";
 
@@ -6,7 +6,6 @@ export async function getInstagramReelViews(videoUrl: string,username: string): 
         throw new Error("Failed to extract Instagram username from URL.");
     }
 
-    console.log(`Fetching reels for username: ${username}`);
 
     // Fetch all reels for the user
     const response = await fetch(

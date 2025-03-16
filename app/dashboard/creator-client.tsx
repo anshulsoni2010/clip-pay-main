@@ -167,6 +167,7 @@ export function CreatorDashboardClient({
         // Check for new campaigns
         const latestCampaigns = await getCreatorCampaigns()
 
+        console.log("latestCampaigns", latestCampaigns);
         // Update existing campaign statuses
         setCampaigns((prevCampaigns) => {
           return prevCampaigns.map((prevCampaign) => {
@@ -969,6 +970,42 @@ export function CreatorDashboardClient({
                             {selectedCampaign.video_outline}
                           </p>
                         </div>
+                        {selectedCampaign.community_link && (
+                          <>
+                              <h3 className="text-base md:text-lg font-medium text-zinc-900">
+                      Community Link
+                        </h3>
+                        <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
+                          <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
+                            {selectedCampaign.community_link}
+                          </p>
+                        </div>
+                          </>
+                        )}
+                        {selectedCampaign.google_drive_link && (
+                          <>
+                              <h3 className="text-base md:text-lg font-medium text-zinc-900">
+                      Google Drive Link
+                        </h3>
+                        <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
+                          <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
+                            {selectedCampaign.google_drive_link}
+                          </p>
+                        </div>
+                          </>
+                        )}
+                        {selectedCampaign.example_video && (
+                          <>
+                              <h3 className="text-base md:text-lg font-medium text-zinc-900">
+                     Example Video
+                        </h3>
+                        <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
+                          <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
+                            {selectedCampaign.example_video}
+                          </p>
+                        </div>
+                          </>
+                        )}
                       </div>
                     </div>
 

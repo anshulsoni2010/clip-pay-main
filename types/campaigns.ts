@@ -48,7 +48,10 @@ export interface NewCampaign {
   rpm: string
   guidelines: string
   video_outline: string
-  referral_bonus_rate: string
+  referral_bonus_rate: string,
+  community_link:string | null,
+  example_video:string | null,
+  google_drive_link:string | null
 }
 
 export interface FormErrors {

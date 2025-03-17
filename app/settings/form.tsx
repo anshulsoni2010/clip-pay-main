@@ -128,23 +128,28 @@ export function SettingsForm({
     }
   }
 
-  const handleInstagramSubmit = async () => {
+  const handleInstagramSubmit = async (username: string) => {
     setError(null)
     setSuccess(null)
 
-    if (!instagramUsername) {
+    if (!username) {
       setError("Please enter a username.")
       return
     }
+
+    console.log("Submitting username:", username) // Debugging log
 
     try {
       const response = await fetch("/api/instagram", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ instagramUsername }),
+        body: JSON.stringify({ instagramUsername: username }),
       })
 
+      console.log("API response received:", response)
+
       const data = await response.json()
+      console.log("API response data:", data)
 
       if (!response.ok) throw new Error(data.error || "Failed to update")
 
@@ -153,11 +158,12 @@ export function SettingsForm({
         router.push("/dashboard")
       }, 1500)
       setInstagramModalOpen(false)
-      setInstagramUsername("")
     } catch (err) {
+      console.error("API call failed:", err)
       setError(err instanceof Error ? err.message : "Something went wrong")
     }
   }
+
   return (
     <div className="divide-y divide-zinc-200">
       {/* Email Section */}

@@ -67,7 +67,7 @@ export function InstagramModal({ isOpen, onClose, onSubmit }: InstagramModalProp
           <Button onClick={onClose} className="bg-gray-300 text-black">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} className="bg-blue-600 text-white">
+          <Button onClick={() => onSubmit(instagramUsername)} className="bg-blue-600 text-white">
             Save
           </Button>
         </div>

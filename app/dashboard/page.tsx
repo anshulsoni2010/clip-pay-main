@@ -24,7 +24,7 @@ export interface Submission {
   user_id: string
   created_at: string
   views: number,
-  platform?: "TikTok" | "YouTube"; 
+  platform:string |null; 
   creator: {
     full_name: string | null
     email: string | null
@@ -35,6 +35,7 @@ export interface Submission {
     reason: string
     confidence: number
   }
+  video_urls: string[] | null // Added missing property
 }
 
 export interface Campaign {

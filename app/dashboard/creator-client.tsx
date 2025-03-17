@@ -378,9 +378,9 @@ export function CreatorDashboardClient({
           views: response.submission.views,
           transcription: response.submission.transcription,
           creator: {
-            organization_name:
-              response.submission.creator?.organization_name || null,
+            organization_name: response.submission.creator?.organization_name || null,
           },
+          video_urls: null
         }
 
         setCampaigns((prevCampaigns) => {

@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server"
 
 export interface Submission {
+  platform: any
   id: string
   status: string
   video_url: string | null
@@ -69,6 +70,7 @@ export const getCreatorCampaigns = async () => {
           campaign_id,
           views,
           user_id,
+          platform,
           created_at,
           transcription,
           creator:creators!inner (

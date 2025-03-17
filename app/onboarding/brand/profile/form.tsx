@@ -23,7 +23,7 @@ export function Step1Form() {
       const result = await updateBrandProfile(organizationName)
 
       if (result.success) {
-        router.push("/onboarding/brand/payments")
+        router.push("/dashboard")
       } else {
         setError(result.error || "Something went wrong")
       }

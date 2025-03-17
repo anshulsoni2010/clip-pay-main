@@ -731,7 +731,7 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                             }
                           )
                           const orderData = await order.json()
-                          console.log(orderData)
+
                           return orderData.id
                           // return actions.order.create({
                           //   intent:"AUTHORIZE",
@@ -760,7 +760,7 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                         }}
                       ></PayPalButtons>
                     </PayPalScriptProvider>
-                    <Button
+                    {/* <Button
                       onClick={() =>
                         handleProcessPayment(selectedSubmission.id)
                       }
@@ -768,7 +768,7 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                       className="bg-[#5865F2] dark:bg-[#5865F2] hover:bg-[#4752C4] dark:hover:bg-[#4752C4] text-white dark:text-white"
                     >
                       Process Payment with Stripe
-                    </Button>
+                    </Button> */}
                   </>
                 )}
               </div>

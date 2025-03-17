@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server"
 
 export interface Submission {
+  platform: any
   id: string
   status: string
   video_url: string | null
@@ -24,6 +25,9 @@ export interface Campaign {
   guidelines: string | null
   status: string | null
   video_outline: string | null
+  community_link: string | null
+  example_video: string | null
+  google_drive_link: string | null
   brand: {
     name: string
     payment_verified: boolean
@@ -66,6 +70,8 @@ export const getCreatorCampaigns = async () => {
           campaign_id,
           views,
           user_id,
+          platform,
+          earned,
           created_at,
           transcription,
           creator:creators!inner (
@@ -150,6 +156,9 @@ export const getCreatorCampaigns = async () => {
           has_insufficient_budget: hasInsufficientBudget,
           rpm: String(campaign.rpm),
           guidelines: campaign.guidelines,
+          community_link: campaign.community_link,
+          example_video: campaign.example_video,
+          google_drive_link: campaign.google_drive_link,
           status: campaign.status,
           video_outline: campaign.video_outline,
           brand: {

@@ -41,6 +41,8 @@ export function CreateCampaignModal({
     guidelines: "",
     video_outline: "",
     community_link:"",
+    example_video:"",
+    google_drive_link:""
   
   })
   const [errors, setErrors] = useState<FormErrors>({})
@@ -87,7 +89,11 @@ export function CreateCampaignModal({
           ? newCampaign.referral_bonus_rate
           : "0.1",
         brandId,
-        community_link:newCampaign.community_link
+        community_link: newCampaign.community_link || "",
+        example_video:newCampaign.example_video || "",
+        google_drive_link:newCampaign.google_drive_link || "",
+                
+
       })
 
       
@@ -351,6 +357,46 @@ export function CreateCampaignModal({
                 }
                 className="bg-white border-zinc-200 text-zinc-900 focus:ring-[#5865F2]/20 focus:border-[#5865F2]"
                 placeholder="Enter community link"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="example_video"
+                className="text-sm font-medium text-zinc-900"
+              >
+           Example Video
+              </Label>
+              <Input
+                id="example_video"
+                value={newCampaign.example_video}
+                onChange={(e) =>
+                  setNewCampaign({
+                    ...newCampaign,
+                    example_video: e.target.value,
+                  })
+                }
+                className="bg-white border-zinc-200 text-zinc-900 focus:ring-[#5865F2]/20 focus:border-[#5865F2]"
+                placeholder="Enter Example Video Link"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="google_drive_link"
+                className="text-sm font-medium text-zinc-900"
+              >
+Google Drive Link
+              </Label>
+              <Input
+                id="google_drive_link"
+                value={newCampaign.google_drive_link}
+                onChange={(e) =>
+                  setNewCampaign({
+                    ...newCampaign,
+                    google_drive_link: e.target.value,
+                  })
+                }
+                className="bg-white border-zinc-200 text-zinc-900 focus:ring-[#5865F2]/20 focus:border-[#5865F2]"
+                placeholder="Enter Google Drive Link"
               />
             </div>
      

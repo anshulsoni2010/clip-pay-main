@@ -105,9 +105,9 @@ export default async function PayoutsPage() {
   }
 
   // Check if brand has completed payment setup
-  if (!brand.payment_verified) {
-    redirect("/onboarding/brand/payments")
-  }
+  // if (!brand.payment_verified) {
+  //   redirect("/onboarding/brand/payments")
+  // }
 
   // Get all approved submissions past their due date for this brand's campaigns only
   const { data: allSubmissions } = await supabase

@@ -66,14 +66,14 @@ export async function middleware(req: NextRequest) {
 
   // Check if this is a payment-related route that requires payment verification
   const paymentRoutes = ['/payouts', '/campaigns/new', '/api/payouts']
-  if (profile.user_type === 'brand' && paymentRoutes.some(route => currentPath.startsWith(route))) {
-    if (!brand?.payment_verified) {
+  // if (profile.user_type === 'brand' && paymentRoutes.some(route => currentPath.startsWith(route))) {
+  //   if (!brand?.payment_verified) {
       
-      const response = NextResponse.redirect(new URL('/onboarding/brand/payments', req.url))
+  //     const response = NextResponse.redirect(new URL('/onboarding/brand/payments', req.url))
       
-      return response
-    }
-  }
+  //     return response
+  //   }
+  // }
 
   // If onboarding is completed, allow access to all routes
   if (profile.onboarding_completed) {
@@ -145,10 +145,10 @@ if (!profile.organization_name && !currentPath.startsWith("/onboarding/creator/p
       return NextResponse.redirect(new URL('/onboarding/brand/profile', req.url))
     }
 
-    if (!brand?.stripe_customer_id || !brand?.payment_verified) {
+    // if (!brand?.stripe_customer_id || !brand?.payment_verified) {
       
-      return NextResponse.redirect(new URL('/onboarding/brand/payments', req.url))
-    }
+    //   return NextResponse.redirect(new URL('/onboarding/brand/payments', req.url))
+    // }
 
     // If all steps completed, mark onboarding as complete
     

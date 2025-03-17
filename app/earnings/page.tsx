@@ -36,8 +36,6 @@ export default async function EarningsPage() {
       user_type,
       organization_name,
       creator:creators (
-        stripe_account_id,
-        stripe_account_status,
         paypal_connected,
         paypal_email
       )
@@ -80,7 +78,7 @@ export default async function EarningsPage() {
   const { data: totalEarnedData } = await supabase
     .from("submissions")
     .select("creator_amount")
-    .eq("creator_id", user.id)
+    .eq("user_id", user.id)
     .in("status", ["approved", "fulfilled"])
 
   const totalEarned =
@@ -128,10 +126,10 @@ export default async function EarningsPage() {
                 </p>
               </div>
               <EarningsClient
-                hasStripeAccount={
-                  !!profile.creator?.stripe_account_id &&
-                  profile.creator?.stripe_account_status === "active"
-                }
+                // hasStripeAccount={
+                //   !!profile.creator?.stripe_account_id &&
+                //   profile.creator?.stripe_account_status === "active"
+                // }
                 totalEarned={totalEarned}
                 availableForPayout={availableForPayout}
                 pendingEarnings={pendingEarnings}

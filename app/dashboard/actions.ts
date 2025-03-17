@@ -214,7 +214,8 @@ export async function createCampaign({
   referral_bonus_rate,
   brandId,
   community_link,
- 
+ example_video,
+ google_drive_link
 }: {
   title: string
   budget_pool: string
@@ -224,7 +225,8 @@ export async function createCampaign({
   referral_bonus_rate: string
   brandId: string
   community_link:string
-  example_video_url:string
+  example_video:string
+  google_drive_link:string
 }) {
   const supabase = await createServerSupabaseClient()
 
@@ -285,6 +287,8 @@ export async function createCampaign({
         status: "active",
         remaining_budget: numericBudgetPool,
         community_link,
+        example_video,
+        google_drive_link
       })
       .select()
       .single()
@@ -554,6 +558,7 @@ export async function getCreatorCampaigns(): Promise<CreatorCampaign[]> {
 
   if (!campaigns) return []
 
+ 
   const transformedCampaigns = campaigns.map((campaign) => {
     // Calculate remaining budget
     const totalSpent =
@@ -582,6 +587,9 @@ export async function getCreatorCampaigns(): Promise<CreatorCampaign[]> {
       rpm: String(campaign.rpm),
       guidelines: campaign.guidelines,
       video_outline: campaign.video_outline,
+      community_link: campaign.community_link,
+      example_video: campaign.example_video,
+      google_drive_link: campaign.google_drive_link,
       status: campaign.status,
       brand: {
         name:

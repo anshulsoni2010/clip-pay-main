@@ -1,5 +1,9 @@
 import { SignUpForm } from "../form"
-
+import { Suspense } from "react"
 export default function CreatorSignUpPage() {
-  return <SignUpForm userType="creator" />
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignUpForm userType="creator" />
+    </Suspense>
+  )
 }

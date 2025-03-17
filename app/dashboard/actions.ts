@@ -214,8 +214,8 @@ export async function createCampaign({
   referral_bonus_rate,
   brandId,
   community_link,
- example_video,
- google_drive_link
+  example_video,
+  google_drive_link,
 }: {
   title: string
   budget_pool: string
@@ -224,9 +224,9 @@ export async function createCampaign({
   video_outline: string
   referral_bonus_rate: string
   brandId: string
-  community_link:string
-  example_video:string
-  google_drive_link:string
+  community_link: string
+  example_video: string
+  google_drive_link: string
 }) {
   const supabase = await createServerSupabaseClient()
 
@@ -288,7 +288,7 @@ export async function createCampaign({
         remaining_budget: numericBudgetPool,
         community_link,
         example_video,
-        google_drive_link
+        google_drive_link,
       })
       .select()
       .single()
@@ -499,9 +499,11 @@ export async function submitVideo({
       views: submission.views,
       transcription: submission.transcription,
       creator: {
-        organization_name: submission.creator[0]?.profiles[0]?.organization_name || null,
+        organization_name:
+          submission.creator[0]?.profiles[0]?.organization_name || null,
       },
-      video_urls: null
+      video_urls: null,
+      platform: null, // ✅ Add platform property to match the Submission type
     }
 
     revalidatePath("/dashboard")
@@ -558,7 +560,6 @@ export async function getCreatorCampaigns(): Promise<CreatorCampaign[]> {
 
   if (!campaigns) return []
 
- 
   const transformedCampaigns = campaigns.map((campaign) => {
     // Calculate remaining budget
     const totalSpent =

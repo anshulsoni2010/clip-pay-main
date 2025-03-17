@@ -16,7 +16,7 @@ export const getBrandCampaigns = async (): Promise<
   // First, check if the user is a brand owner
   const { data: brand } = await supabase
     .from("brands")
-    .select("id, user_id")
+    .select("id, user_id, organization_name")
     .eq("user_id", user.id)
     .single()
 
@@ -83,39 +83,41 @@ export const getBrandCampaigns = async (): Promise<
     return []
   }
 
-  return campaigns.map((campaign) => ({
-    id: campaign.id,
-    title: campaign.title,
-    budget_pool: String(campaign.budget_pool),
-    remaining_budget: String(campaign.remaining_budget),
-    rpm: String(campaign.rpm),
-    guidelines: campaign.guidelines || "",
-    video_outline: campaign.video_outline,
-    status: campaign.status || "",
-    brand: {
-      name: brand?.organization_name || "",
-      payment_verified: false,
-    },
-    submission: null,
-    submissions: (campaign.submissions || []).map((submission) => ({
-      id: submission.id,
-      video_url: submission.video_url || "",
-      file_path: submission.file_path,
-      transcription: submission.transcription || "",
-      status: submission.status,
-      campaign_id: campaign.id,
-      creator_id: submission.user_id,
-      created_at: submission.created_at,
-      views: submission.views || 0,
-      creator: {
-        full_name: submission.creator?.profile?.organization_name || "",
+  return campaigns.map(
+    (campaign): CampaignWithSubmissions => ({
+      id: campaign.id,
+      title: campaign.title,
+      budget_pool: String(campaign.budget_pool),
+      remaining_budget: String(campaign.remaining_budget),
+      rpm: String(campaign.rpm),
+      guidelines: campaign.guidelines || "",
+      video_outline: campaign.video_outline,
+      status: campaign.status || "",
+      brand: {
+        name: brand?.organization_name || "",
+        payment_verified: false,
       },
-      auto_moderation_result: submission.auto_moderation_result,
-    })),
-    activeSubmissionsCount: (campaign.submissions || []).filter(
-      (s) => s.status === "active"
-    ).length,
-  }))
+      submission: null,
+      submissions: (campaign.submissions || []).map((submission: any) => ({
+        id: submission.id,
+        video_url: submission.video_url || "",
+        file_path: submission.file_path,
+        transcription: submission.transcription || "",
+        status: submission.status,
+        campaign_id: campaign.id,
+        creator_id: submission.user_id,
+        created_at: submission.created_at,
+        views: submission.views || 0,
+        creator: {
+          full_name: submission.creator?.profile?.organization_name || "",
+        },
+        auto_moderation_result: submission.auto_moderation_result,
+      })),
+      activeSubmissionsCount: (campaign.submissions || []).filter(
+        (s: any) => s.status === "active"
+      ).length,
+    })
+  )
 }
 
 export async function getBrandCampaigns1(brandId: string) {

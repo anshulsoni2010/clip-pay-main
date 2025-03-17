@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server"
 
 export interface Submission {
-  platform: any
+  platform?: any // ✅ Make platform optional if it's not always available
   id: string
   status: string
   video_url: string | null

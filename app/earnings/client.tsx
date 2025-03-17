@@ -1,10 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, DollarSign, Clock, CheckCircle2 } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { formatDistanceToNow } from "date-fns"
+import { RefreshCw } from "lucide-react"
+import { useState } from "react"
 
 interface Transaction {
   id: string
@@ -45,78 +43,42 @@ export function EarningsClient({
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  // useEffect(() => {
-  //   const fetchTransactions = async () => {
-  //     // if (!hasStripeAccount) return
-
-  //     setIsLoading(true)
-  //     try {
-  //       const response = await fetch("/api/stripe/transactions")
-  //       const data = await response.json()
-  //       if (response.ok) {
-  //         setTransactions(data.transactions)
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching transactions:", error)
-  //     } finally {
-  //       setIsLoading(false)
-  //     }
-  //   }
-
-  //   fetchTransactions()
-  // }, [hasStripeAccount])
-
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white border border-zinc-200 rounded-lg p-6">
+      <div className="grid grid-cols-3">
+        <div className="bg-white rounded-l-lg border border-l-2 border-t-2 border-b-2 border-zinc-200 p-6">
           <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="w-5 h-5 text-black" />
-            <h3 className="text-sm font-medium text-zinc-900">Total Earned</h3>
+            <h3 className="text-2xl  font-semibold text-zinc-900">
+              Total Earned
+            </h3>
           </div>
           <p className="text-2xl font-semibold text-zinc-900">
             ${totalEarned.toFixed(2)}
           </p>
         </div>
 
-        <div className="col-span-2 bg-white border border-zinc-200 rounded-lg p-6">
-          <div className="flex items-center justify-between">
+        <div className="col-span-2 rounded-r-lg border-t-2 border-b-2 border-r-2 bg-white border border-zinc-200 w-fit p-6">
+          <div className="space-y-2">
+            <h3 className="text-2xl  font-semibold text-zinc-900">
+              Account Status
+            </h3>
             <div>
-              <h2 className="text-lg font-semibold text-zinc-900">
-                Bank Account Status
-              </h2>
-              {/* <p className="text-sm text-zinc-600 mt-1">
-                {hasStripeAccount
-                  ? "Your bank account is connected and ready to receive payments"
-                  : "Link your bank account to start receiving payments"}
-              </p> */}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              {/* <div className="bg-white border border-zinc-200 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-zinc-900">Stripe</h2>
-                <p className="text-sm text-zinc-600 mt-1">
-                  {hasStripeAccount ? "Connected" : "Not connected"}
-                </p>
-                {hasStripeAccount ? (
-                  <span className="text-green-600">✔ Active</span>
-                ) : (
-                  <Button
-                    onClick={() =>
-                      (window.location.href = "/api/stripe/connect")
-                    }
-                  >
-                    Connect Stripe
-                  </Button>
-                )}
-              </div> */}
+              <span className="text-black">
+                {hasPayPalAccount
+                  ? "Account Connected"
+                  : "Connect Your Account"}
+              </span>
 
-              <div className="bg-white border border-zinc-200 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-zinc-900">PayPal</h2>
-                <p className="text-sm text-zinc-600 mt-1">
-                  {hasPayPalAccount ? "Connected" : "Not connected"}
-                </p>
+              <div className="">
+                <div className="text-sm text-zinc-600 mt-1">
+                  {hasPayPalAccount ? (
+                    <h2 className="text-sm"> ● Paypal Account Connected </h2>
+                  ) : (
+                    "Not connected"
+                  )}
+                </div>
                 {hasPayPalAccount ? (
-                  <span className="text-green-600">✔ Active</span>
+                  <span> </span>
                 ) : (
                   <Button
                     onClick={() =>
@@ -132,11 +94,22 @@ export function EarningsClient({
         </div>
       </div>
 
-      <div className="bg-white border border-zinc-200 rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-zinc-900">
-            Recent Activity
-          </h2>
+      <div className="bg-white border border-zinc-200 rounded-lg py-1 px-1">
+        <div>
+          <div className="flex items-center justify-between px-2 py-1">
+            <h2 className="text-lg font-semibold text-zinc-900">
+              Recent Activity
+            </h2>
+
+            {/* when user clicks on the refresh button, the page should refresh */}
+            <div
+              onClick={() => window.location.reload()}
+              className="cursor-pointer w-6 h-6 rounded-md border-zinc-300 border-2 bg-slate-100 flex items-center justify-center"
+            >
+              <RefreshCw className="w-4 h-4 text-slate-600" />
+            </div>
+          </div>
+
           {/* {availableForPayout > 0 (
             <Button
               onClick={() => (window.location.href = "/api/stripe/payout")}

@@ -21,10 +21,11 @@ export interface Submission {
   file_path: string | null
   campaign_id: string
   transcription: string | null
+
   user_id: string
   created_at: string
-  views: number,
-  platform:string |null; 
+  views: number
+  platform: string | null
   creator: {
     full_name: string | null
     email: string | null
@@ -43,6 +44,7 @@ export interface Campaign {
   title: string
   budget_pool: string
   rpm: string
+  remaining_budget: any
   guidelines: string | null
   status: string | null
   video_outline: string | null
@@ -55,6 +57,7 @@ export interface Campaign {
 
 export interface CampaignWithSubmissions extends Campaign {
   submissions: Submission[]
+
   activeSubmissionsCount: number
 }
 
@@ -213,7 +216,7 @@ export const updateVideoViews = async (
       validResults.map(({ url, info }) =>
         supabase
           .from("submissions")
-          .update({ views: info.views })
+          .update({ views: info?.views })
           .eq("video_url", url)
       )
     )

@@ -11,9 +11,7 @@ interface ReferralData {
   profile_id: string
 }
 
-export async function updateCreatorProfile(
-  organizationName: string,
-) {
+export async function updateCreatorProfile(organizationName: string) {
   const supabase = await createServerSupabaseClient()
   const {
     data: { user },
@@ -45,83 +43,107 @@ export async function updateCreatorProfile(
   }
 }
 
-
 export async function updateSubmissionVideoUrl(
-  submissionId: string,
-  videoUrls: string[]
-) {
-  const supabase = await createServerSupabaseClient();
+  submissionId: string | string[],
+  videoUrls: string | string[]
+): Promise<{ success: boolean; views?: number; error?: string }> {
+  if (Array.isArray(submissionId)) {
+    return Promise.all(
+      submissionId.map((id) => updateSubmissionVideoUrl(id, videoUrls))
+    )
+      .then((results) => ({
+        success: results.every((r) => r.success),
+        views: results.reduce((sum, r) => sum + (r.views || 0), 0),
+      }))
+      .catch((error) => ({
+        success: false,
+        error: error.message || "An error occurred",
+      }))
+  }
+
+  if (typeof videoUrls === "string") {
+    videoUrls = [videoUrls] // Convert single string to array
+  }
+
+  const supabase = await createServerSupabaseClient()
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Not authenticated" };
+    return { success: false, error: "Not authenticated" }
   }
 
   try {
-    let validUrls: string[] = [];
-    let platforms: string[] = [];
-    let totalViews = 0;
+    let validUrls: string[] = []
+    let platforms: string[] = []
+    let totalViews = 0
 
     for (const videoUrl of videoUrls) {
-      if (!videoUrl.trim()) continue;
+      if (!videoUrl.trim()) continue
 
-      const isTikTok = videoUrl.includes("tiktok.com");
-      const isYouTube = videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
-      const isInstagram = videoUrl.includes("instagram.com/reel/");
+      const isTikTok = videoUrl.includes("tiktok.com")
+      const isYouTube =
+        videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")
+      const isInstagram = videoUrl.includes("instagram.com/reel/")
 
       if (!isTikTok && !isYouTube && !isInstagram) {
-        return { success: false, error: "Invalid video URL. Use TikTok, YouTube, or Instagram." };
+        return {
+          success: false,
+          error: "Invalid video URL. Use TikTok, YouTube, or Instagram.",
+        }
       }
 
-      let videoInfo = null;
+      let videoInfo = null
 
       if (isTikTok) {
-        platforms.push("TikTok");
+        platforms.push("TikTok")
         const { data: creator } = await supabase
           .from("creators")
           .select("tiktok_access_token")
           .eq("user_id", user.id)
-          .single();
+          .single()
 
         if (!creator?.tiktok_access_token) {
-          return { success: false, error: "TikTok not connected" };
+          return { success: false, error: "TikTok not connected" }
         }
 
-        const tiktokApi = new TikTokAPI();
-        videoInfo = await tiktokApi.getVideoInfo(videoUrl, creator.tiktok_access_token, user.id);
-      } 
-      
-      else if (isYouTube) {
-        platforms.push("YouTube");
-        videoInfo = await YouTubeAPI.getVideoInfo(videoUrl);
-      } 
-      
-      else if (isInstagram) {
-        platforms.push("Instagram");
+        const tiktokApi = new TikTokAPI()
+        videoInfo = await tiktokApi.getVideoInfo(
+          videoUrl,
+          creator.tiktok_access_token,
+          user.id
+        )
+      } else if (isYouTube) {
+        platforms.push("YouTube")
+        videoInfo = await YouTubeAPI.getVideoInfo(videoUrl)
+      } else if (isInstagram) {
+        platforms.push("Instagram")
         const { data: creator } = await supabase
-        .from("creators")
-        .select("instagram_username")
-        .eq("user_id", user.id)
-        .single();
+          .from("creators")
+          .select("instagram_username")
+          .eq("user_id", user.id)
+          .single()
 
         if (!creator?.instagram_username) {
-          return { success: false, error: "Instagram not connected" };
+          return { success: false, error: "Instagram not connected" }
         }
 
-        const views = await getInstagramReelViews(videoUrl,creator.instagram_username);
-        videoInfo = { views };
+        const views = await getInstagramReelViews(
+          videoUrl,
+          creator.instagram_username
+        )
+        videoInfo = { views }
       }
 
       if (videoInfo) {
-        totalViews += videoInfo.views || 0;
-        validUrls.push(videoUrl);
+        totalViews += videoInfo.views || 0
+        validUrls.push(videoUrl)
       }
     }
 
     if (validUrls.length === 0) {
-      return { success: false, error: "No valid video URLs provided." };
+      return { success: false, error: "No valid video URLs provided." }
     }
 
     const { data: updatedSubmission, error: updateError } = await supabase
@@ -134,19 +156,19 @@ export async function updateSubmissionVideoUrl(
       .eq("id", submissionId)
       .eq("user_id", user.id)
       .select()
-      .single();
+      .single()
 
     if (updateError) {
-      throw updateError;
+      throw updateError
     }
 
-    return { success: true, views: totalViews };
+    return { success: true, views: totalViews }
   } catch (error) {
-    console.error("Error in updateSubmissionVideoUrl:", error);
+    console.error("Error in updateSubmissionVideoUrl:", error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update submission",
-    };
+      error:
+        error instanceof Error ? error.message : "Failed to update submission",
+    }
   }
 }
-

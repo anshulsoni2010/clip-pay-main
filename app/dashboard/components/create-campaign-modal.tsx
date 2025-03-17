@@ -40,10 +40,9 @@ export function CreateCampaignModal({
     referral_bonus_rate: "",
     guidelines: "",
     video_outline: "",
-    community_link:"",
-    example_video:"",
-    google_drive_link:""
-  
+    community_link: "",
+    example_video: "",
+    google_drive_link: "",
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
@@ -70,7 +69,6 @@ export function CreateCampaignModal({
     return Object.keys(newErrors).length === 0
   }
 
-
   const handleCreateCampaign = async () => {
     if (!validateForm()) {
       return
@@ -78,7 +76,7 @@ export function CreateCampaignModal({
 
     try {
       setIsLoading(true)
-      
+
       const newCampaignData = await createCampaign({
         ...newCampaign,
         budget_pool: newCampaign.budget_pool.trim()
@@ -90,13 +88,9 @@ export function CreateCampaignModal({
           : "0.1",
         brandId,
         community_link: newCampaign.community_link || "",
-        example_video:newCampaign.example_video || "",
-        google_drive_link:newCampaign.google_drive_link || "",
-                
-
+        example_video: newCampaign.example_video || "",
+        google_drive_link: newCampaign.google_drive_link || "",
       })
-
-      
 
       if (
         !newCampaignData ||
@@ -136,7 +130,9 @@ export function CreateCampaignModal({
         guidelines: "",
         video_outline: "",
         referral_bonus_rate: "0.10",
-        community_link:"",
+        community_link: "",
+        example_video: "",
+        google_drive_link: "",
       })
       setShowSuccessDialog(true)
 
@@ -152,7 +148,7 @@ export function CreateCampaignModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-       <DialogContent className="bg-white border-zinc-200 text-zinc-900 sm:max-w-2xl max-h-[calc(100vh-100px)] overflow-y-auto">
+        <DialogContent className="bg-white border-zinc-200 text-zinc-900 sm:max-w-2xl max-h-[calc(100vh-100px)] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-zinc-900">
               Create New Campaign
@@ -344,11 +340,11 @@ export function CreateCampaignModal({
                 htmlFor="community_link"
                 className="text-sm font-medium text-zinc-900"
               >
-               Link to community
+                Link to community
               </Label>
               <Input
                 id="community_link"
-                value={newCampaign.community_link}
+                value={newCampaign.community_link ?? ""}
                 onChange={(e) =>
                   setNewCampaign({
                     ...newCampaign,
@@ -364,11 +360,11 @@ export function CreateCampaignModal({
                 htmlFor="example_video"
                 className="text-sm font-medium text-zinc-900"
               >
-           Example Video
+                Example Video
               </Label>
               <Input
                 id="example_video"
-                value={newCampaign.example_video}
+                value={newCampaign.example_video ?? ""}
                 onChange={(e) =>
                   setNewCampaign({
                     ...newCampaign,
@@ -384,11 +380,11 @@ export function CreateCampaignModal({
                 htmlFor="google_drive_link"
                 className="text-sm font-medium text-zinc-900"
               >
-Google Drive Link
+                Google Drive Link
               </Label>
               <Input
                 id="google_drive_link"
-                value={newCampaign.google_drive_link}
+                value={newCampaign.google_drive_link ?? ""}
                 onChange={(e) =>
                   setNewCampaign({
                     ...newCampaign,
@@ -399,7 +395,7 @@ Google Drive Link
                 placeholder="Enter Google Drive Link"
               />
             </div>
-     
+
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"

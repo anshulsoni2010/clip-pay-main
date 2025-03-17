@@ -420,6 +420,7 @@ export function CreatorDashboardClient({
     }
   }
 
+
   const renderSubmissionSection = () => {
     if (!selectedCampaign) return null
 
@@ -636,7 +637,7 @@ export function CreatorDashboardClient({
 
           <Button
             onClick={handleSubmit}
-            disabled={isSubmitting || (!file && !videoUrl)}
+            disabled={isSubmitting || (!file)}
             className="bg-[#5865F2]"
           >
             {isSubmitting ? (

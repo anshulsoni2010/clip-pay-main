@@ -18,6 +18,7 @@ import {
 } from "@/types/campaigns"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { createServerSupabaseClient } from "@/lib/supabase-server"
 
 interface CreateCampaignModalProps {
   open: boolean
@@ -39,11 +40,12 @@ export function CreateCampaignModal({
     referral_bonus_rate: "",
     guidelines: "",
     video_outline: "",
+    community_link:"",
+  
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
   const router = useRouter()
 
   const validateForm = () => {
@@ -66,6 +68,7 @@ export function CreateCampaignModal({
     return Object.keys(newErrors).length === 0
   }
 
+
   const handleCreateCampaign = async () => {
     if (!validateForm()) {
       return
@@ -73,7 +76,7 @@ export function CreateCampaignModal({
 
     try {
       setIsLoading(true)
-
+      
       const newCampaignData = await createCampaign({
         ...newCampaign,
         budget_pool: newCampaign.budget_pool.trim()
@@ -84,9 +87,10 @@ export function CreateCampaignModal({
           ? newCampaign.referral_bonus_rate
           : "0.1",
         brandId,
+        community_link:newCampaign.community_link
       })
 
-      console.log("New campaign data response:", newCampaignData) // Debugging
+      
 
       if (
         !newCampaignData ||
@@ -105,6 +109,7 @@ export function CreateCampaignModal({
           rpm: String(newCampaignData.campaign.rpm),
           guidelines: newCampaignData.campaign.guidelines,
           video_outline: newCampaignData.campaign.video_outline,
+          community_link: newCampaignData.campaign.community_link,
           status: newCampaignData.campaign.status,
           brand: {
             name: "Loading...",
@@ -125,6 +130,7 @@ export function CreateCampaignModal({
         guidelines: "",
         video_outline: "",
         referral_bonus_rate: "0.10",
+        community_link:"",
       })
       setShowSuccessDialog(true)
 
@@ -140,13 +146,13 @@ export function CreateCampaignModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="bg-white border-zinc-200 text-zinc-900 sm:max-w-2xl">
+       <DialogContent className="bg-white border-zinc-200 text-zinc-900 sm:max-w-2xl max-h-[calc(100vh-100px)] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-zinc-900">
               Create New Campaign
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-6 py-4">
+          <div className="space-y-6 py-4 ">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label
@@ -327,7 +333,27 @@ export function CreateCampaignModal({
                 placeholder="Enter video outline"
               />
             </div>
-
+            <div className="space-y-2">
+              <Label
+                htmlFor="community_link"
+                className="text-sm font-medium text-zinc-900"
+              >
+               Link to community
+              </Label>
+              <Input
+                id="community_link"
+                value={newCampaign.community_link}
+                onChange={(e) =>
+                  setNewCampaign({
+                    ...newCampaign,
+                    community_link: e.target.value,
+                  })
+                }
+                className="bg-white border-zinc-200 text-zinc-900 focus:ring-[#5865F2]/20 focus:border-[#5865F2]"
+                placeholder="Enter community link"
+              />
+            </div>
+     
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"

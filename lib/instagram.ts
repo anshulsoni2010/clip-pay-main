@@ -1,9 +1,7 @@
-export async function getInstagramReelViews(videoUrl: string): Promise<number> {
+export async function getInstagramReelViews(videoUrl: string,username: string): Promise<number> {
     const APIFY_API_KEY = process.env.APIFY_API_KEY;
     const APIFY_ACTOR_ID = "apify~instagram-reel-scraper";
 
-    // Extract username from Reel URL
-    const username ="distractor_indian";
     if (!username) {
         throw new Error("Failed to extract Instagram username from URL.");
     }

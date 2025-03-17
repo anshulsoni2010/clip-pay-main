@@ -14,11 +14,7 @@ import { InstagramAuthForm } from "../instagram/instaauth"
  * @param youtubeAccessToken - The user's YouTube access token, if available.
  * @returns A JSX element containing a form to connect the user's TikTok and YouTube accounts.
  */
-/******  fcfd735f-5545-4fbf-8abe-ae449c2d2d66  *******/ export function TikTokAuthForm({
-  youtubeAccessToken,
-}: {
-  youtubeAccessToken?: string
-}) {
+/******  fcfd735f-5545-4fbf-8abe-ae449c2d2d66  *******/export function TikTokAuthForm({ youtubeAccessToken }: { youtubeAccessToken?: string }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -75,6 +71,8 @@ import { InstagramAuthForm } from "../instagram/instaauth"
   //     setIsLoading(false)
   //   }
   // }
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-8">
@@ -145,32 +143,24 @@ import { InstagramAuthForm } from "../instagram/instaauth"
           {isLoading ? "Connecting..." : "Connect YouTube Account"}
         </Button>
       )} */}
-          <InstagramAuthForm />
-          <a
-            href="/dashboard"
-            className="w-full h-11 text-zinc-600 hover:bg-zinc-100"
-          >
+      <InstagramAuthForm/>
+          <a href="/onboarding/creator/profile" className="w-full h-11 text-zinc-600 hover:bg-zinc-100">
             Skip for Now
           </a>
 
           <p className="text-xs text-center text-zinc-500">
             By connecting your account, you agree to our{" "}
-            <a
-              href="/legal/terms"
-              className="text-blue-600 hover:text-blue-800"
-            >
+            <a href="/legal/terms" className="text-blue-600 hover:text-blue-800">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a
-              href="/legal/privacy"
-              className="text-blue-600 hover:text-blue-800"
-            >
+            <a href="/legal/privacy" className="text-blue-600 hover:text-blue-800">
               Privacy Policy
             </a>
           </p>
         </div>
       </div>
+      
     </div>
   )
 }

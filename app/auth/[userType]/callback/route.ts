@@ -15,121 +15,122 @@ function getProjectRef() {
 
 export const dynamic = "force-dynamic"
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ userType: string }> }
-) {
-  const requestUrl = new URL(request.url)
+export async function GET(request: NextRequest, context: { params: { userType: string } }) {
+  const { params } = context;
+  const userType = params.userType; // ✅ Fix for params issue
 
-  // Get and validate user type from URL params
-  const { userType } = await params
+  const requestUrl = new URL(request.url);
+  console.log("Received OAuth Callback:", requestUrl.toString());
 
-  if (!userType || !["creator", "brand"].includes(userType)) {
-    console.error("Invalid user type:", userType)
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Invalid user type")}`
-    )
-  }
-
-  const code = requestUrl.searchParams.get("code")
-  const next = requestUrl.searchParams.get("next") || "/dashboard"
+  const code = requestUrl.searchParams.get("code");
+  const next = requestUrl.searchParams.get("next") || "/dashboard";
+  const referralCode = requestUrl.searchParams.get("ref"); // ✅ Extract referral code
+  console.log("Extracted Referral Code:", referralCode);
 
   if (!code) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=No code provided`
-    )
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=No code provided`);
   }
 
-  const supabase = await createServerActionClient()
+  const supabase = await createServerActionClient();
 
   try {
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error("Session exchange error:", error)
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent(error.message)}`
-      )
+      console.error("Session exchange error:", error);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent(error.message)}`);
     }
 
-    const userId = data.session.user.id
-    const accessToken = data.session.provider_token
-    const refreshToken = data.session.provider_refresh_token
+    const userId = data.session.user.id;
+    const userEmail = data.session.user.email;
+    const accessToken = data.session.provider_token;
+    const refreshToken = data.session.provider_refresh_token;
 
+    if (!userEmail) {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=Authentication required`);
+    }
+
+    console.log("User Email:", userEmail);
+    console.log("Referral Code from URL:", referralCode);
+
+    let referredByUUID = null;
+
+    // ✅ Fetch referrer if referral code exists
+    if (userType === "creator" && referralCode) {
+      const { data: referrer, error: referrerFetchError } = await supabase
+        .from("referrals")
+        .select("profile_id")
+        .eq("code", referralCode)
+        .single();
+
+      console.log("Referrer:", referrer);
+      console.log("Referrer Fetch Error:", referrerFetchError);
+
+      if (!referrerFetchError && referrer?.profile_id) {
+        referredByUUID = referrer.profile_id;
+      }
+    }
+
+    // ✅ Store YouTube tokens if user is a creator
     if (userType === "creator" && accessToken && refreshToken) {
-      const { error: storeError } = await supabase
+      await supabase
         .from("creators")
         .update({
           youtube_access_token: accessToken,
           youtube_refresh_token: refreshToken,
           youtube_connected: true,
         })
-        .eq("user_id", userId) // ✅ Use user_id if it's the primary key
-
-      if (storeError) {
-        console.error("Error storing YouTube tokens:", storeError)
-      } else {
-        console.log("YouTube tokens stored successfully!")
-      }
+        .eq("user_id", userId);
     }
 
-    // Fetch or create the user profile
-    const { data: existingProfile, error: fetchError } = await supabase
+    // ✅ Fetch user profile
+    const { data: existingProfile } = await supabase
       .from("profiles")
-      .select("user_type, onboarding_completed")
+      .select("user_type, onboarding_completed, referred_by")
       .eq("user_id", userId)
-      .single()
+      .single();
 
-    if (fetchError && fetchError.code !== "PGRST116") {
-      console.error("Failed to fetch profile:", fetchError)
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Failed to fetch user profile")}`
-      )
-    }
+    console.log("Existing Profile:", existingProfile);
 
+    console.log("Reffered by  :",referredByUUID);
     if (!existingProfile) {
+      // ✅ Insert new profile with referral if applicable
+      console.log(`Inserting new profile for ${userId}, referred by ${referredByUUID}`);
       const { error: insertError } = await supabase.from("profiles").insert({
         user_id: userId,
         user_type: userType,
         onboarding_completed: false,
-      })
+        referred_by: referredByUUID || null, // ✅ Store referral only if available
+      });
 
       if (insertError) {
-        console.error("Failed to create profile:", insertError)
-        return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Failed to create user profile")}`
-        )
+        console.error("Error inserting profile:", insertError);
+      }
+    } else if (!existingProfile.referred_by && referredByUUID) {
+      // ✅ Update `referred_by` only if it's missing
+      console.log(`Updating referred_by for user ${userId} -> ${referredByUUID}`);
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ referred_by: referredByUUID })
+        .eq("user_id", userId);
+
+      if (updateError) {
+        console.error("Error updating referred_by:", updateError);
       }
     }
 
-    // Determine redirect URL based on the profile's user type
-    const profile = existingProfile || {
-      user_type: userType,
-      onboarding_completed: false,
-    }
-    const onboardingPath =
-      profile.user_type === "brand" ? "brand/profile" : "creator"
+    // ✅ Ensure redirect URL is properly formatted
+    const profile = existingProfile || { user_type: userType, onboarding_completed: false };
+    const onboardingPath = profile.user_type === "brand" ? "brand/profile" : "creator";
     const redirectUrl = !profile.onboarding_completed
       ? `${process.env.NEXT_PUBLIC_BASE_URL}/onboarding/${onboardingPath}`
-      : `${process.env.NEXT_PUBLIC_BASE_URL}${next}`
+      : `${process.env.NEXT_PUBLIC_BASE_URL}${next}`;
 
-    const response = NextResponse.redirect(redirectUrl)
-
-    // Set the auth cookie
-    const cookieName = `sb-${getProjectRef()}-auth-token`
-    response.cookies.set(cookieName, JSON.stringify(data.session), {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "development",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
-    return response
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
-    console.error("Auth error:", error)
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Authentication failed")}`
-    )
+    console.error("Auth error:", error);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/signin?error=${encodeURIComponent("Authentication failed")}`);
   }
 }
+
+

@@ -4,6 +4,7 @@ export interface Submission {
   id: string
   status: string
   video_url: string | null
+  video_urls: string[] | null
   file_path: string | null
   campaign_id: string
   user_id: string

@@ -32,7 +32,7 @@ export function ReferralClient({
   const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(referralCode)
+    navigator.clipboard.writeText(referralLink)
     setCopied(true)
     toast.success("Referral code copied to clipboard!")
     setTimeout(() => setCopied(false), 2000)
@@ -43,6 +43,8 @@ export function ReferralClient({
     return total + (creator.creators?.[0]?.total_earned || 0)
   }, 0)
 
+  
+  const referralLink = `${process.env.NEXT_PUBLIC_BASE_URL}/signup/creator?ref=${referralCode}`
   return (
     <div className="space-y-6">
       <div>
@@ -67,7 +69,7 @@ export function ReferralClient({
           </h2>
           <div className="flex items-center gap-4">
             <code className="bg-zinc-50 text-zinc-900 px-4 py-2 rounded-lg flex-1 border border-zinc-200">
-              {referralCode}
+              {referralLink}
             </code>
             <Button
               onClick={handleCopy}

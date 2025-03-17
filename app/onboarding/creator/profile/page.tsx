@@ -19,25 +19,33 @@ export default async function CreatorProfilePage() {
     .eq("user_id", user.id)
     .single()
 
-  const { data: creator } = await supabase
-    .from("creators")
-    .select("tiktok_connected")
-    .eq("user_id", user.id)
-    .single()
+    console.log("profile2", profile)
+  // const { data: creator } = await supabase
+  //   .from("creators")
+  //   .select("tiktok_connected")
+  //   .eq("user_id", user.id)
+  //   .single()
 
   if (!profile || profile.user_type !== "creator") {
     redirect("/dashboard")
   }
 
   // If onboarding is already complete, go to dashboard
-  if (profile.onboarding_completed) {
+  if (profile.organization_name) {
     redirect("/dashboard")
   }
 
+  // If organization_name is missing, let user complete it first
+if (!profile.organization_name) {
+  console.log("Organization name is missing")
+  return <ProfileForm />
+}
+
+
   // If TikTok is not connected, go back to TikTok auth
-  if (!creator?.tiktok_connected) {
-    redirect("/onboarding/creator/tiktok")
-  }
+  // if (!creator?.tiktok_connected) {
+  //   redirect("/onboarding/creator/tiktok")
+  // }
 
   return <ProfileForm />
 }

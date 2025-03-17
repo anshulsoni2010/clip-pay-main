@@ -29,9 +29,10 @@ interface SettingsFormProps {
   email: string
   userType: "creator" | "brand"
   hasStripeAccount: boolean
-  autoApprovalEnabled?: boolean,
-  tittokConnected:Boolean
-  instaConnected:Boolean
+  autoApprovalEnabled?: boolean
+  tittokConnected: Boolean
+  instaConnected: Boolean
+  hasPaypalAccount: boolean
 }
 
 export function SettingsForm({
@@ -40,7 +41,8 @@ export function SettingsForm({
   hasStripeAccount,
   autoApprovalEnabled = false,
   tittokConnected,
-  instaConnected
+  instaConnected,
+  hasPaypalAccount,
 }: SettingsFormProps) {
   const [newEmail, setNewEmail] = useState("")
   const [confirmEmail, setConfirmEmail] = useState("")
@@ -49,11 +51,11 @@ export function SettingsForm({
   const [emailError, setEmailError] = useState("")
   const [passwordError, setPasswordError] = useState("")
   const [showEmailDialog, setShowEmailDialog] = useState(false)
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isInstagramModalOpen, setInstagramModalOpen] = useState(false)
   const [instagramUsername, setInstagramUsername] = useState("")
- 
+
   const [success, setSuccess] = useState<string | null>(null)
   const router = useRouter()
   const [isAutoApprovalEnabled, setIsAutoApprovalEnabled] =
@@ -82,7 +84,6 @@ export function SettingsForm({
   }
 
   const handleTikTokAuth = async () => {
-   
     setError(null)
 
     try {
@@ -103,7 +104,6 @@ export function SettingsForm({
       setError(
         err instanceof Error ? err.message : "Failed to connect with TikTok"
       )
-
     }
   }
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -131,23 +131,23 @@ export function SettingsForm({
   const handleInstagramSubmit = async () => {
     setError(null)
     setSuccess(null)
-  
+
     if (!instagramUsername) {
       setError("Please enter a username.")
       return
     }
-  
+
     try {
       const response = await fetch("/api/instagram", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ instagramUsername }),
       })
-  
+
       const data = await response.json()
-  
+
       if (!response.ok) throw new Error(data.error || "Failed to update")
-  
+
       setSuccess("Instagram username updated successfully!")
       setTimeout(() => {
         router.push("/dashboard")
@@ -294,45 +294,40 @@ export function SettingsForm({
         </Dialog>
       </div>
 
-{userType==="creator" && (
-  <>
+      {userType === "creator" && (
+        <>
+          <div className="py-6 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-zinc-900">
+                Tittok Account
+              </h3>
+            </div>
 
-  <div className="py-6 flex items-center justify-between">
-  <div>
-    <h3 className="text-sm font-medium text-zinc-900">Tittok Account</h3>
-  
-  </div>
+            <Button
+              onClick={handleTikTokAuth}
+              className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
+              size="sm"
+            >
+              {tittokConnected ? "Connected" : "Connect Tiktok"}
+            </Button>
+          </div>
+          <div className="py-6 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-zinc-900">
+                Instagram Account
+              </h3>
+            </div>
 
-   
-      <Button
-       onClick={handleTikTokAuth}
-        className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
-        size="sm"
-      >
-       {tittokConnected ?  "Connected": "Connect Tiktok"}
-      </Button>
-  
-
-</div>
-  <div className="py-6 flex items-center justify-between">
-  <div>
-    <h3 className="text-sm font-medium text-zinc-900">Instagram Account</h3>
-  
-  </div>
-
-   
-      <Button
-         onClick={() => setInstagramModalOpen(true)}
-        className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
-        size="sm"
-      >
-       {instaConnected ?  "Connected": "Connect Instagram"}
-      </Button>
-  
-
-</div>
-</>
-)}
+            <Button
+              onClick={() => setInstagramModalOpen(true)}
+              className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
+              size="sm"
+            >
+              {instaConnected ? "Connected" : "Connect Instagram"}
+            </Button>
+          </div>
+        </>
+      )}
       {/* Auto-Approval Section for Brands */}
       {userType === "brand" && (
         <div className="py-6">
@@ -404,7 +399,7 @@ export function SettingsForm({
               <h3 className="text-sm font-medium text-zinc-900">
                 Payment Settings
               </h3>
-              {hasStripeAccount ? (
+              {hasPaypalAccount ? (
                 <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-xs font-medium">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   Connected
@@ -419,7 +414,7 @@ export function SettingsForm({
               Manage your bank account for receiving payments
             </p>
           </div>
-          {hasStripeAccount ? (
+          {hasPaypalAccount ? (
             <Button
               className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
               size="sm"
@@ -431,18 +426,18 @@ export function SettingsForm({
             <Button
               className="bg-[#5865F2] hover:bg-[#4752C4] text-white dark:bg-[#5865F2] dark:hover:bg-[#4752C4] dark:text-white"
               size="sm"
-              onClick={() => (window.location.href = "/api/stripe/connect")}
+              onClick={() => (window.location.href = "/api/paypal/connect")}
             >
               Connect bank
             </Button>
           )}
         </div>
       )}
-        <InstagramModal
-              isOpen={isInstagramModalOpen}
-              onClose={() => setInstagramModalOpen(false)}
-              onSubmit={handleInstagramSubmit}
-            />
+      <InstagramModal
+        isOpen={isInstagramModalOpen}
+        onClose={() => setInstagramModalOpen(false)}
+        onSubmit={handleInstagramSubmit}
+      />
     </div>
   )
 }

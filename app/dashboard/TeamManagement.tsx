@@ -1,55 +1,55 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 interface TeamMember {
-  id: string;
-  email: string;
+  id: string
+  email: string
 }
 
 export function TeamManagement({ brandId }: { brandId: string }) {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [email, setEmail] = useState("");
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [email, setEmail] = useState("")
 
   useEffect(() => {
     async function fetchTeamMembers() {
       try {
-        const res = await fetch(`/api/brands?brandId=${brandId}`);
-        const data = await res.json();
-  
-        console.log("API Response:", data); // Debugging
-  
+        const res = await fetch(`/api/brands?brandId=${brandId}`)
+        const data = await res.json()
+
+        console.log("API Response:", data) // Debugging
+
         // Ensure data is an array before setting state
         if (Array.isArray(data)) {
-          setTeamMembers(data);
+          setTeamMembers(data)
         } else {
-          console.error("Expected array, received:", data);
-          setTeamMembers([]); // Set empty array to prevent .map() errors
+          console.error("Expected array, received:", data)
+          setTeamMembers([]) // Set empty array to prevent .map() errors
         }
       } catch (error) {
-        console.error("Error fetching team members:", error);
-        setTeamMembers([]); // Fallback to empty array
+        console.error("Error fetching team members:", error)
+        setTeamMembers([]) // Fallback to empty array
       }
     }
-  
-    if (brandId) fetchTeamMembers();
-  }, [brandId]);
-  
+
+    if (brandId) fetchTeamMembers()
+  }, [brandId])
+
   async function addMember() {
     const res = await fetch("/api/brands", {
       method: "POST",
       body: JSON.stringify({ email, brandId }),
-    });
+    })
 
     if (res.ok) {
-      toast.success("Team member added!");
-      setEmail("");
-      setTeamMembers([...teamMembers, { id: crypto.randomUUID(), email }]);
+      toast.success("Team member added!")
+      setEmail("")
+      setTeamMembers([...teamMembers, { id: crypto.randomUUID(), email }])
     } else {
-      toast.error("Failed to add team member");
+      toast.error("Failed to add team member")
     }
   }
 
@@ -57,13 +57,13 @@ export function TeamManagement({ brandId }: { brandId: string }) {
     const res = await fetch("/api/brands", {
       method: "DELETE",
       body: JSON.stringify({ userId, brandId }),
-    });
+    })
 
     if (res.ok) {
-      toast.success("Team member removed");
-      setTeamMembers(teamMembers.filter((m) => m.id !== userId));
+      toast.success("Team member removed")
+      setTeamMembers(teamMembers.filter((m) => m.id !== userId))
     } else {
-      toast.error("Failed to remove team member");
+      toast.error("Failed to remove team member")
     }
   }
 
@@ -82,10 +82,7 @@ export function TeamManagement({ brandId }: { brandId: string }) {
 
       <ul className="mt-4">
         {teamMembers.map((member) => (
-          <li
-            key={member.id}
-            className="flex justify-between border-b py-2"
-          >
+          <li key={member.id} className="flex justify-between border-b py-2">
             <span>{member.email}</span>
             <Button
               variant="destructive"
@@ -97,5 +94,5 @@ export function TeamManagement({ brandId }: { brandId: string }) {
         ))}
       </ul>
     </div>
-  );
+  )
 }

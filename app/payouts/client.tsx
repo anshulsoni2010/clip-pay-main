@@ -22,6 +22,12 @@ import {
   isPaymentTooLow,
 } from "./calculations"
 
+import {
+  PayPalButtons,
+  PayPalButtonsComponentProps,
+  PayPalScriptProvider,
+} from "@paypal/react-paypal-js"
+
 interface PayoutsClientProps {
   submissions: SubmissionWithDetails[]
 }
@@ -39,6 +45,13 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [videoModalOpen, setVideoModalOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
+
+  const styles: PayPalButtonsComponentProps["style"] = {
+    shape: "rect",
+    layout: "horizontal",
+    height: 25,
+    label: "paypal",
+  }
 
   const handleProcessPayment = async (submissionId: string) => {
     setProcessingPayment(true)
@@ -161,7 +174,7 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
       </div>
     )
   }
-
+  console.log({ submissions })
   return (
     <div className="flex h-[calc(100vh)]">
       {/* Left Panel - Submissions List */}
@@ -697,16 +710,65 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                   //   {processingPayment ? "Processing..." : "Process Payment"}
                   // </Button>
                   <>
-               
-                  <Button>
-                    Process Payment with paypal
-                  </Button>
-                  <Button                  onClick={() => handleProcessPayment(selectedSubmission.id)}
-                     disabled={processingPayment}
-                  className="bg-[#5865F2] dark:bg-[#5865F2] hover:bg-[#4752C4] dark:hover:bg-[#4752C4] text-white dark:text-white"
-                   >
-                    Process Payment with Stripe
-                  </Button>
+                    <PayPalScriptProvider
+                      options={{
+                        clientId:
+                          process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+                      }}
+                    >
+                      <PayPalButtons
+                        style={styles}
+                        createOrder={async () => {
+                          const order = await fetch(
+                            "/api/paypal/payout/create-order",
+                            {
+                              method: "POST",
+                              body: JSON.stringify({
+                                submissionId: selectedSubmission.id,
+                                creatorUserId:
+                                  selectedSubmission.creator.user_id,
+                              }),
+                            }
+                          )
+                          const orderData = await order.json()
+                          console.log(orderData)
+                          return orderData.id
+                          // return actions.order.create({
+                          //   intent:"AUTHORIZE",
+                          //   purchase_units:[{
+                          //     description:"",
+                          //     amount:{
+                          //       currency_code:"USD",
+                          //       value: "25.00"
+                          //     }
+                          //   }]
+                          // });
+                        }}
+                        onApprove={async (data) => {
+                          const orderId = data.orderID
+                          const response = await fetch(
+                            "/api/paypal/payout/success",
+                            {
+                              method: "POST",
+                              body: JSON.stringify({ ...data }),
+                            }
+                          )
+                          console.log(
+                            " capture order response",
+                            response.json()
+                          )
+                        }}
+                      ></PayPalButtons>
+                    </PayPalScriptProvider>
+                    <Button
+                      onClick={() =>
+                        handleProcessPayment(selectedSubmission.id)
+                      }
+                      disabled={processingPayment}
+                      className="bg-[#5865F2] dark:bg-[#5865F2] hover:bg-[#4752C4] dark:hover:bg-[#4752C4] text-white dark:text-white"
+                    >
+                      Process Payment with Stripe
+                    </Button>
                   </>
                 )}
               </div>

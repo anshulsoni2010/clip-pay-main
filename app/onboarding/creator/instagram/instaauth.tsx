@@ -18,23 +18,23 @@ export function InstagramAuthForm() {
   const handleInstagramSubmit = async () => {
     setError(null)
     setSuccess(null)
-  
+
     if (!instagramUsername) {
       setError("Please enter a username.")
       return
     }
-  
+
     try {
       const response = await fetch("/api/instagram", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ instagramUsername }),
       })
-  
+
       const data = await response.json()
-  
+
       if (!response.ok) throw new Error(data.error || "Failed to update")
-  
+
       setSuccess("Instagram username updated successfully!")
       setTimeout(() => {
         router.push("/dashboard")
@@ -58,7 +58,9 @@ export function InstagramAuthForm() {
       {isInstagramModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
-            <h2 className="text-lg font-semibold text-center">Enter Instagram Username</h2>
+            <h2 className="text-lg font-semibold text-center">
+              Enter Instagram Username
+            </h2>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             {success && <p className="text-green-500 text-sm">{success}</p>}
             <input
@@ -69,17 +71,23 @@ export function InstagramAuthForm() {
               placeholder="Instagram Username"
             />
             <div className="flex justify-end gap-2">
-              <Button onClick={() => setInstagramModalOpen(false)} className="bg-gray-300 text-black">
+              <Button
+                onClick={() => setInstagramModalOpen(false)}
+                className="bg-gray-300 text-black"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleInstagramSubmit} className="bg-blue-600 text-white">
+              <Button
+                onClick={handleInstagramSubmit}
+                className="bg-blue-600 text-white"
+              >
                 Save
               </Button>
             </div>
           </div>
         </div>
       )}
-        <InstagramModal
+      <InstagramModal
         isOpen={isInstagramModalOpen}
         onClose={() => setInstagramModalOpen(false)}
         onSubmit={handleInstagramSubmit}

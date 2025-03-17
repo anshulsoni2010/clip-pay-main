@@ -16,7 +16,7 @@ export const getBrandCampaigns = async (): Promise<
   // First, check if the user is a brand owner
   const { data: brand } = await supabase
     .from("brands")
-    .select("id, user_id, organization_name")
+    .select("id, user_id")
     .eq("user_id", user.id)
     .single()
 
@@ -94,7 +94,8 @@ export const getBrandCampaigns = async (): Promise<
       video_outline: campaign.video_outline,
       status: campaign.status || "",
       brand: {
-        name: brand?.organization_name || "",
+        name:
+          campaign.submissions?.[0]?.creator?.profile?.organization_name || "",
         payment_verified: false,
       },
       submission: null,

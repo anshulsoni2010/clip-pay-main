@@ -10,6 +10,8 @@ type ProfileResponse = {
   creator: {
     stripe_account_id: string | null
     stripe_account_status: string | null
+    paypal_connected: boolean | false
+    paypal_email: string | null
   }
 }
 
@@ -35,7 +37,9 @@ export default async function EarningsPage() {
       organization_name,
       creator:creators (
         stripe_account_id,
-        stripe_account_status
+        stripe_account_status,
+        paypal_connected,
+        paypal_email
       )
     `
     )
@@ -87,13 +91,15 @@ export default async function EarningsPage() {
   const { data: availableData } = await supabase
     .from("submissions")
     .select("creator_amount")
-    .eq("creator_id", user.id)
+    .eq("user_id", user.id)
     .eq("status", "approved")
-    .eq("paid_out", false)
+    .eq("payout_status", "pending")
 
+  console.log(availableData)
   const availableForPayout =
     availableData?.reduce((sum, sub) => sum + (sub.creator_amount || 0), 0) || 0
 
+  console.log({ availableForPayout })
   // Get pending earnings (pending submissions)
   const { data: pendingData } = await supabase
     .from("submissions")
@@ -141,6 +147,12 @@ export default async function EarningsPage() {
                     status: submission.status,
                     created_at: submission.created_at,
                   })) || []
+                }
+                hasPayPalAccount={profile.creator.paypal_connected}
+                paypalAccountStatus={
+                  profile.creator.paypal_connected
+                    ? "Connected"
+                    : "Not Connected"
                 }
               />
             </div>

@@ -8,21 +8,23 @@ export async function PATCH(req: Request) {
   try {
     const { instagramUsername } = await req.json()
     if (!instagramUsername) {
-      return NextResponse.json({ error: "Instagram username is required" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Instagram username is required" },
+        { status: 400 }
+      )
     }
 
-      const supabase = await createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
     // Get authenticated user
     const {
-        data: { user },
-      } = await supabase.auth.getUser()
-    
-    
-      if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-      }
-    
-    const userId = user.id;
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const userId = user.id
 
     // Update creators table
     const { error: updateError } = await supabase
@@ -34,9 +36,15 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: updateError.message }, { status: 500 })
     }
 
-    return NextResponse.json({ success: "Instagram username updated successfully" }, { status: 200 })
+    return NextResponse.json(
+      { success: "Instagram username updated successfully" },
+      { status: 200 }
+    )
   } catch (err) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    )
   }
 }
 export async function GET(req: Request,res: Response) {

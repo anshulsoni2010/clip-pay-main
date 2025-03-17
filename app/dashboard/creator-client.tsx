@@ -142,7 +142,7 @@ export function CreatorDashboardClient({
   const [hasNewCampaigns, setHasNewCampaigns] = useState(false)
   const [selectedCampaign, setSelectedCampaign] =
     useState<CreatorCampaign | null>(null)
-    const [videoUrls, setVideoUrls] = useState<string[]>([]);
+  const [videoUrls, setVideoUrls] = useState<string[]>([])
 
   const [updatingUrl, setUpdatingUrl] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -258,20 +258,22 @@ export function CreatorDashboardClient({
 
   useEffect(() => {
     if (selectedCampaign?.submission) {
-      console.log("selectedCampaign.submission", selectedCampaign.submission);
-      if (Array.isArray(selectedCampaign.submission.video_urls) && selectedCampaign.submission.video_urls.length > 0) {
-        setVideoUrls(selectedCampaign.submission.video_urls);
+      console.log("selectedCampaign.submission", selectedCampaign.submission)
+      if (
+        Array.isArray(selectedCampaign.submission.video_urls) &&
+        selectedCampaign.submission.video_urls.length > 0
+      ) {
+        setVideoUrls(selectedCampaign.submission.video_urls)
       } else if (selectedCampaign.submission.video_url) {
-        setVideoUrls([selectedCampaign.submission.video_url]);
+        setVideoUrls([selectedCampaign.submission.video_url])
       } else {
-        setVideoUrls([]);
+        setVideoUrls([])
       }
     } else {
-      setVideoUrls([]);
+      setVideoUrls([])
     }
-    setIsEditing(false);
-  }, [selectedCampaign]);
-  
+    setIsEditing(false)
+  }, [selectedCampaign])
 
   // Calculate total potential earnings from approved videos
   useEffect(() => {
@@ -493,44 +495,44 @@ export function CreatorDashboardClient({
                   Your submission has been approved! To start earning, please
                   update your submission with a public video URL.
                 </p>
-              <VideoUrlInput
-  videoViews={selectedCampaign.submission.views}
-  submissionId={selectedCampaign.submission.id}
-  currentUrls={videoUrls} // Pass the updated video URLs array
-  onUpdate={(views) => {
-    // Update the campaigns list with new views
-    setCampaigns((prevCampaigns) => {
-      return prevCampaigns.map((campaign) => {
-        if (campaign.id === selectedCampaign.id) {
-          return {
-            ...campaign,
-            submission: campaign.submission
-              ? {
-                  ...campaign.submission,
-                  views,
-                }
-              : null,
-          };
-        }
-        return campaign;
-      });
-    });
+                <VideoUrlInput
+                  videoViews={selectedCampaign.submission.views}
+                  submissionId={selectedCampaign.submission.id}
+                  currentUrls={videoUrls} // Pass the updated video URLs array
+                  onUpdate={(views) => {
+                    // Update the campaigns list with new views
+                    setCampaigns((prevCampaigns) => {
+                      return prevCampaigns.map((campaign) => {
+                        if (campaign.id === selectedCampaign.id) {
+                          return {
+                            ...campaign,
+                            submission: campaign.submission
+                              ? {
+                                  ...campaign.submission,
+                                  views,
+                                }
+                              : null,
+                          }
+                        }
+                        return campaign
+                      })
+                    })
 
-    // Update selected campaign
-    setSelectedCampaign((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        submission: prev.submission
-          ? {
-              ...prev.submission,
-              views,
-            }
-          : null,
-      };
-    });
-  }}
-/>
+                    // Update selected campaign
+                    setSelectedCampaign((prev) => {
+                      if (!prev) return null
+                      return {
+                        ...prev,
+                        submission: prev.submission
+                          ? {
+                              ...prev.submission,
+                              views,
+                            }
+                          : null,
+                      }
+                    })
+                  }}
+                />
               </div>
             ) : (
               <p className="text-sm">

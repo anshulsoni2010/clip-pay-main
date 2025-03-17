@@ -239,7 +239,7 @@ export function DashboardClient({
         email={email}
         organization_name={organization_name}
       />
- 
+
       {/* Metrics */}
       <main className="lg:ml-64 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-8 pt-20 lg:pt-8">
@@ -284,8 +284,6 @@ export function DashboardClient({
           </div>
         </div>
       </main>
-   
-
 
       <CreateCampaignModal
         open={showNewCampaign}

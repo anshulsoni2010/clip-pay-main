@@ -66,14 +66,14 @@ interface Creator {
 }
 
 export default async function DashboardPage() {
-  const supabase = await createServerSupabaseClient();
-  const tiktokApi = new TikTokAPI();
+  const supabase = await createServerSupabaseClient()
+  const tiktokApi = new TikTokAPI()
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/signin");
+    redirect("/signin")
   }
 
   // Get user profile to check type
@@ -81,17 +81,17 @@ export default async function DashboardPage() {
     .from("profiles")
     .select("*, user_type, organization_name")
     .eq("user_id", user.id)
-    .single();
+    .single()
 
   // If onboarding not completed, redirect to appropriate onboarding flow
   if (!profile?.onboarding_completed) {
     redirect(
       `/onboarding/${profile?.user_type === "brand" ? "brand/profile" : "creator"}`
-    );
+    )
   }
 
-  let brandId: string | null = null;
-  let creator: Creator | null = null;
+  let brandId: string | null = null
+  let creator: Creator | null = null
 
   if (profile?.user_type === "brand") {
     // Get brand ID for brand owner
@@ -99,32 +99,32 @@ export default async function DashboardPage() {
       .from("brands")
       .select("id")
       .eq("user_id", user.id)
-      .single();
+      .single()
 
-    brandId = brand?.id || null;
+    brandId = brand?.id || null
   } else if (profile?.user_type === "brand_team") {
     // Get brand ID for team member
     const { data: brandTeamMember } = await supabase
       .from("brand_team_members")
       .select("brand_id")
       .eq("user_id", user.id)
-      .single();
+      .single()
 
-    brandId = brandTeamMember?.brand_id || null;
+    brandId = brandTeamMember?.brand_id || null
   } else {
     // Get creator data if user is a creator
     const { data } = await supabase
       .from("creators")
       .select("stripe_account_id, stripe_account_status, tiktok_access_token")
       .eq("user_id", user.id)
-      .single();
+      .single()
 
-    creator = data as Creator;
+    creator = data as Creator
 
     // If creator has TikTok connected, update video views
     if (creator?.tiktok_access_token) {
-      const campaigns = await getCreatorCampaigns();
-      updateVideoViews(campaigns, creator);
+      const campaigns = await getCreatorCampaigns()
+      updateVideoViews(campaigns, creator)
 
       return (
         <div className="min-h-screen bg-[#313338]">
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
             organization_name={profile.organization_name}
           />
         </div>
-      );
+      )
     }
   }
 
@@ -157,9 +157,8 @@ export default async function DashboardPage() {
         />
       )}
     </div>
-  );
+  )
 }
-
 
 export const updateVideoViews = async (
   campaigns: CreatorCampaign[],
@@ -170,11 +169,11 @@ export const updateVideoViews = async (
 
   // Get all video submissions that need updating (with platform info)
   const videoSubmissions = campaigns
-  .map((campaign) => campaign.submission)
-  .filter((submission): submission is Submission =>
-    !!submission?.video_url && !!submission?.platform
-  )
-
+    .map((campaign) => campaign.submission)
+    .filter(
+      (submission): submission is Submission =>
+        !!submission?.video_url && !!submission?.platform
+    )
 
   if (videoSubmissions.length === 0) return
 

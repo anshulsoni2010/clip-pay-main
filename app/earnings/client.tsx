@@ -40,8 +40,7 @@ export function EarningsClient({
   pendingEarnings,
   submissions,
   hasPayPalAccount,
-  paypalAccountStatus
-
+  paypalAccountStatus,
 }: EarningsClientProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -93,35 +92,42 @@ export function EarningsClient({
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
-  <div className="bg-white border border-zinc-200 rounded-lg p-6">
-    <h2 className="text-lg font-semibold text-zinc-900">Stripe</h2>
-    <p className="text-sm text-zinc-600 mt-1">
-      {hasStripeAccount ? "Connected" : "Not connected"}
-    </p>
-    {hasStripeAccount ? (
-      <span className="text-green-600">✔ Active</span>
-    ) : (
-      <Button onClick={() => (window.location.href = "/api/stripe/connect")}>
-        Connect Stripe
-      </Button>
-    )}
-  </div>
+              <div className="bg-white border border-zinc-200 rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-zinc-900">Stripe</h2>
+                <p className="text-sm text-zinc-600 mt-1">
+                  {hasStripeAccount ? "Connected" : "Not connected"}
+                </p>
+                {hasStripeAccount ? (
+                  <span className="text-green-600">✔ Active</span>
+                ) : (
+                  <Button
+                    onClick={() =>
+                      (window.location.href = "/api/stripe/connect")
+                    }
+                  >
+                    Connect Stripe
+                  </Button>
+                )}
+              </div>
 
-  <div className="bg-white border border-zinc-200 rounded-lg p-6">
-    <h2 className="text-lg font-semibold text-zinc-900">PayPal</h2>
-    <p className="text-sm text-zinc-600 mt-1">
-      {hasPayPalAccount ? "Connected" : "Not connected"}
-    </p>
-    {hasPayPalAccount ? (
-      <span className="text-green-600">✔ Active</span>
-    ) : (
-      <Button onClick={() => (window.location.href = "/api/paypal/connect")}>
-        Connect PayPal
-      </Button>
-    )}
-  </div>
-</div>
-
+              <div className="bg-white border border-zinc-200 rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-zinc-900">PayPal</h2>
+                <p className="text-sm text-zinc-600 mt-1">
+                  {hasPayPalAccount ? "Connected" : "Not connected"}
+                </p>
+                {hasPayPalAccount ? (
+                  <span className="text-green-600">✔ Active</span>
+                ) : (
+                  <Button
+                    onClick={() =>
+                      (window.location.href = "/api/paypal/connect")
+                    }
+                  >
+                    Connect PayPal
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -134,6 +140,21 @@ export function EarningsClient({
           {availableForPayout > 0 && hasStripeAccount && (
             <Button
               onClick={() => (window.location.href = "/api/stripe/payout")}
+              className="bg-black hover:bg-black/90 text-white"
+            >
+              Cash Out (${availableForPayout.toFixed(2)})
+            </Button>
+          )}
+          {availableForPayout > 0 && paypalAccountStatus && (
+            <Button
+              onClick={async () => {
+                const response = await fetch("/api/paypal/payout", {
+                  method: "POST",
+                  body: "",
+                })
+                const data = await response.json()
+                console.log(data)
+              }}
               className="bg-black hover:bg-black/90 text-white"
             >
               Cash Out (${availableForPayout.toFixed(2)})
@@ -156,7 +177,7 @@ export function EarningsClient({
                     {submission.brand_name}
                   </p>
                   <p className="text-xs text-zinc-500">
-                    {new Date(submission.created_at).toLocaleDateString()}
+                    {new Date(submission.created_at).toDateString()}
                   </p>
                 </div>
                 <div className="text-right">

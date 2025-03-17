@@ -156,7 +156,7 @@ export function CreatorDashboardClient({
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [totalEarnings, setTotalEarnings] = useState(0)
-
+  const [totalEarned, setTotalEarned] = useState(0)
   const isJustSubmitted =
     selectedCampaign && selectedCampaign.id === submittedCampaignId
 
@@ -167,7 +167,7 @@ export function CreatorDashboardClient({
         // Check for new campaigns
         const latestCampaigns = await getCreatorCampaigns()
 
-        console.log("latestCampaigns", latestCampaigns);
+        console.log("latestCampaigns", latestCampaigns)
         // Update existing campaign statuses
         setCampaigns((prevCampaigns) => {
           return prevCampaigns.map((prevCampaign) => {
@@ -278,15 +278,12 @@ export function CreatorDashboardClient({
   // Calculate total potential earnings from approved videos
   useEffect(() => {
     const earnings = campaigns.reduce((total, campaign) => {
-      if (
-        campaign.submission?.status === "approved" &&
-        campaign.submission.video_url
-      ) {
+      if (campaign.submission?.status) {
         const views = campaign.submission.views || 0
         const rpm = parseFloat(campaign.rpm)
         const videoEarnings = (views * rpm) / 1000
         // Only count earnings if this individual video has earned $25 or more
-        return total + (videoEarnings >= 25 ? videoEarnings : 0)
+        return total + videoEarnings
       }
       return total
     }, 0)
@@ -380,9 +377,10 @@ export function CreatorDashboardClient({
           views: response.submission.views,
           transcription: response.submission.transcription,
           creator: {
-            organization_name: response.submission.creator?.organization_name || null,
+            organization_name:
+              response.submission.creator?.organization_name || null,
           },
-          video_urls: null
+          video_urls: null,
         }
 
         setCampaigns((prevCampaigns) => {
@@ -420,7 +418,6 @@ export function CreatorDashboardClient({
       setFile(null)
     }
   }
-
 
   const renderSubmissionSection = () => {
     if (!selectedCampaign) return null
@@ -638,7 +635,7 @@ export function CreatorDashboardClient({
 
           <Button
             onClick={handleSubmit}
-            disabled={isSubmitting || (!file)}
+            disabled={isSubmitting || !file}
             className="bg-[#5865F2]"
           >
             {isSubmitting ? (
@@ -666,14 +663,47 @@ export function CreatorDashboardClient({
       <main className="lg:ml-64 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-8 pt-20 lg:pt-8">
           {/* Show banner if creator has no Stripe account and has earnings over $25 */}
-          {(!creator?.stripe_account_id ||
+          {/* {(!creator?.stripe_account_id ||
             creator?.stripe_account_status !== "active") &&
             totalEarnings >= 25 && (
               <StripeConnectBanner totalEarnings={totalEarnings} />
-            )}
+            )} */}
 
           {/* Stats Overview */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <Card className="p-4 lg:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="hidden lg:flex bg-zinc-100 p-2 rounded-lg">
+                    <DollarSign className="w-5 h-5 text-zinc-600" />
+                  </div>
+                  <span className="text-sm font-medium text-zinc-600">
+                    Total Earnings
+                  </span>
+                </div>
+                <button className="p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M8 3.5C8 3.22386 8.22386 3 8.5 3C8.77614 3 9 3.22386 9 3.5C9 3.77614 8.77614 4 8.5 4C8.22386 4 8 3.77614 8 3.5Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M8 7.5C8 7.22386 8.22386 7 8.5 7C8.77614 7 9 7.22386 9 7.5C9 7.77614 8.77614 8 8.5 8C8.22386 8 8 7.77614 8 7.5Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M8 11.5C8 11.2239 8.22386 11 8.5 11C8.77614 11 9 11.2239 9 11.5C9 11.7761 8.77614 12 8.5 12C8.22386 12 8 11.7761 8 11.5Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex items-end justify-between">
+                <p className="text-xl lg:text-2xl font-semibold text-zinc-900">
+                  {totalEarnings ? totalEarnings : 0}
+                </p>
+              </div>
+            </Card>
             <Card className="p-4 lg:p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -703,41 +733,7 @@ export function CreatorDashboardClient({
               </div>
               <div className="flex items-end justify-between">
                 <p className="text-xl lg:text-2xl font-semibold text-zinc-900">
-                  $0
-                </p>
-              </div>
-            </Card>
-
-            <Card className="p-4 lg:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="hidden lg:flex bg-zinc-100 p-2 rounded-lg">
-                    <Users className="w-5 h-5 text-zinc-600" />
-                  </div>
-                  <span className="text-sm font-medium text-zinc-600">
-                    Active Campaigns
-                  </span>
-                </div>
-                <button className="p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M8 3.5C8 3.22386 8.22386 3 8.5 3C8.77614 3 9 3.22386 9 3.5C9 3.77614 8.77614 4 8.5 4C8.22386 4 8 3.77614 8 3.5Z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M8 7.5C8 7.22386 8.22386 7 8.5 7C8.77614 7 9 7.22386 9 7.5C9 7.77614 8.77614 8 8.5 8C8.22386 8 8 7.77614 8 7.5Z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M8 11.5C8 11.2239 8.22386 11 8.5 11C8.77614 11 9 11.2239 9 11.5C9 11.7761 8.77614 12 8.5 12C8.22386 12 8 11.7761 8 11.5Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="flex items-end justify-between">
-                <p className="text-xl lg:text-2xl font-semibold text-zinc-900">
-                  {campaigns.length}
+                  {totalEarnings ? totalEarnings : 0}
                 </p>
               </div>
             </Card>
@@ -974,38 +970,38 @@ export function CreatorDashboardClient({
                         </div>
                         {selectedCampaign.community_link && (
                           <>
-                              <h3 className="text-base md:text-lg font-medium text-zinc-900">
-                      Community Link
-                        </h3>
-                        <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
-                          <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
-                            {selectedCampaign.community_link}
-                          </p>
-                        </div>
+                            <h3 className="text-base md:text-lg font-medium text-zinc-900">
+                              Community Link
+                            </h3>
+                            <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
+                              <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
+                                {selectedCampaign.community_link}
+                              </p>
+                            </div>
                           </>
                         )}
                         {selectedCampaign.google_drive_link && (
                           <>
-                              <h3 className="text-base md:text-lg font-medium text-zinc-900">
-                      Google Drive Link
-                        </h3>
-                        <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
-                          <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
-                            {selectedCampaign.google_drive_link}
-                          </p>
-                        </div>
+                            <h3 className="text-base md:text-lg font-medium text-zinc-900">
+                              Google Drive Link
+                            </h3>
+                            <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
+                              <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
+                                {selectedCampaign.google_drive_link}
+                              </p>
+                            </div>
                           </>
                         )}
                         {selectedCampaign.example_video && (
                           <>
-                              <h3 className="text-base md:text-lg font-medium text-zinc-900">
-                     Example Video
-                        </h3>
-                        <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
-                          <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
-                            {selectedCampaign.example_video}
-                          </p>
-                        </div>
+                            <h3 className="text-base md:text-lg font-medium text-zinc-900">
+                              Example Video
+                            </h3>
+                            <div className="bg-zinc-50 border border-zinc-200 p-3 md:p-4 rounded-lg">
+                              <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">
+                                {selectedCampaign.example_video}
+                              </p>
+                            </div>
                           </>
                         )}
                       </div>

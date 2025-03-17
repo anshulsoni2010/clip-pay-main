@@ -18,10 +18,10 @@ export default async function BrandOnboardingStep1() {
     .eq("user_id", user.id)
     .single()
 
-  // If user already has an organization name, redirect to step 2
-  if (profile?.organization_name) {
-    redirect("/onboarding/brand/payments")
-  }
+  // // If user already has an organization name, redirect to step 2
+  // if (profile?.organization_name) {
+  //   redirect("/onboarding/brand/payments")
+  // }
 
   return <Step1Form />
 }

@@ -17,7 +17,7 @@ interface Transaction {
 }
 
 interface EarningsClientProps {
-  hasStripeAccount: boolean
+  // hasStripeAccount: boolean
   totalEarned: number
   availableForPayout: number
   hasPayPalAccount: boolean
@@ -34,7 +34,7 @@ interface EarningsClientProps {
 }
 
 export function EarningsClient({
-  hasStripeAccount,
+  // hasStripeAccount,
   totalEarned,
   availableForPayout,
   pendingEarnings,
@@ -45,26 +45,26 @@ export function EarningsClient({
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!hasStripeAccount) return
+  // useEffect(() => {
+  //   const fetchTransactions = async () => {
+  //     // if (!hasStripeAccount) return
 
-      setIsLoading(true)
-      try {
-        const response = await fetch("/api/stripe/transactions")
-        const data = await response.json()
-        if (response.ok) {
-          setTransactions(data.transactions)
-        }
-      } catch (error) {
-        console.error("Error fetching transactions:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
+  //     setIsLoading(true)
+  //     try {
+  //       const response = await fetch("/api/stripe/transactions")
+  //       const data = await response.json()
+  //       if (response.ok) {
+  //         setTransactions(data.transactions)
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching transactions:", error)
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
 
-    fetchTransactions()
-  }, [hasStripeAccount])
+  //   fetchTransactions()
+  // }, [hasStripeAccount])
 
   return (
     <div className="space-y-6">
@@ -85,14 +85,14 @@ export function EarningsClient({
               <h2 className="text-lg font-semibold text-zinc-900">
                 Bank Account Status
               </h2>
-              <p className="text-sm text-zinc-600 mt-1">
+              {/* <p className="text-sm text-zinc-600 mt-1">
                 {hasStripeAccount
                   ? "Your bank account is connected and ready to receive payments"
                   : "Link your bank account to start receiving payments"}
-              </p>
+              </p> */}
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white border border-zinc-200 rounded-lg p-6">
+              {/* <div className="bg-white border border-zinc-200 rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-zinc-900">Stripe</h2>
                 <p className="text-sm text-zinc-600 mt-1">
                   {hasStripeAccount ? "Connected" : "Not connected"}
@@ -108,7 +108,7 @@ export function EarningsClient({
                     Connect Stripe
                   </Button>
                 )}
-              </div>
+              </div> */}
 
               <div className="bg-white border border-zinc-200 rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-zinc-900">PayPal</h2>
@@ -137,14 +137,14 @@ export function EarningsClient({
           <h2 className="text-lg font-semibold text-zinc-900">
             Recent Activity
           </h2>
-          {availableForPayout > 0 && hasStripeAccount && (
+          {/* {availableForPayout > 0 (
             <Button
               onClick={() => (window.location.href = "/api/stripe/payout")}
               className="bg-black hover:bg-black/90 text-white"
             >
               Cash Out (${availableForPayout.toFixed(2)})
             </Button>
-          )}
+          )} */}
           {availableForPayout > 0 && paypalAccountStatus && (
             <Button
               onClick={async () => {

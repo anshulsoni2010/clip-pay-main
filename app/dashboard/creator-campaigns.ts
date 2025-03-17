@@ -24,10 +24,10 @@ export interface Campaign {
   rpm: string
   guidelines: string | null
   status: string | null
-  video_outline: string | null,
-  community_link:string | null,
-  example_video:string | null,
-  google_drive_link:string | null,
+  video_outline: string | null
+  community_link: string | null
+  example_video: string | null
+  google_drive_link: string | null
   brand: {
     name: string
     payment_verified: boolean
@@ -71,6 +71,7 @@ export const getCreatorCampaigns = async () => {
           views,
           user_id,
           platform,
+          earned,
           created_at,
           transcription,
           creator:creators!inner (
@@ -156,8 +157,8 @@ export const getCreatorCampaigns = async () => {
           rpm: String(campaign.rpm),
           guidelines: campaign.guidelines,
           community_link: campaign.community_link,
-       example_video:campaign.example_video,
-       google_drive_link:campaign.google_drive_link,
+          example_video: campaign.example_video,
+          google_drive_link: campaign.google_drive_link,
           status: campaign.status,
           video_outline: campaign.video_outline,
           brand: {

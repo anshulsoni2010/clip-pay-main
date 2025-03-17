@@ -2,10 +2,8 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Copy } from "lucide-react"
 import { toast } from "sonner"
 import { formatDistanceToNow } from "date-fns"
-import { StripeConnectBanner } from "@/components/stripe-connect-banner"
 
 interface ReferredCreator {
   user_id: string
@@ -43,7 +41,6 @@ export function ReferralClient({
     return total + (creator.creators?.[0]?.total_earned || 0)
   }, 0)
 
-  
   const referralLink = `${process.env.NEXT_PUBLIC_BASE_URL}/signup/creator?ref=${referralCode}`
   return (
     <div className="space-y-6">
@@ -55,12 +52,12 @@ export function ReferralClient({
         </p>
       </div>
 
-      {!hasStripeAccount && (
+      {/* {!hasStripeAccount && (
         <StripeConnectBanner
           totalEarnings={totalReferralEarnings}
           context="referral"
         />
-      )}
+      )} */}
 
       <div className="bg-white border border-zinc-200 rounded-lg p-6 space-y-6">
         <div>

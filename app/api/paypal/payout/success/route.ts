@@ -72,7 +72,7 @@ export async function POST(request: Request) {
         .eq("id", submissionId)
 
       await sendInvoiceEmail({
-        email: user.email,
+        email: user.email ?? "no-reply@example.com",
         name: user.user_metadata.full_name || "User",
         amount,
         currency,

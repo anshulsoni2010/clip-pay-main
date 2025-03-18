@@ -17,7 +17,20 @@ async function getPayPalToken() {
   return data.access_token
 }
 
-export async function createPayPalInvoice({ email, name, amount, currency, transactionId }) {
+export async function createPayPalInvoice({
+  email,
+  name,
+  amount,
+  currency,
+  transactionId,
+}: {
+  email: string
+  name: string
+  amount: string
+  currency: string
+  transactionId: string
+}) {
+
     const accessToken = await getPayPalToken()
   
     const invoicePayload = {

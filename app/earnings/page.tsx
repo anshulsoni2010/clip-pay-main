@@ -66,7 +66,7 @@ export default async function EarningsPage() {
     `
     )
     .eq("user_id", user.id)
-    .in("status", ["fulfilled", "approved", "pending"])
+    .in("status", ["fulfilled", "approved", "pending", "paid"])
     .order("created_at", { ascending: false })
     .limit(10)
 
@@ -90,8 +90,8 @@ export default async function EarningsPage() {
     .from("submissions")
     .select("creator_amount")
     .eq("user_id", user.id)
-    .eq("status", "approved")
-    .eq("payout_status", "pending")
+    .eq("status", "paid")
+  // .eq("payout_status", "pending")
 
   console.log(availableData)
   const availableForPayout =

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         creator_amount
         `
       )
-      .eq("status", "approved")
+      .eq("status", "paid")
       .eq("user_id", user.id)
 
     if (submissionError || submission.length === 0) {
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
       0
     )
 
+    console.log("Payable amount: ", payableAmount)
     // if (submission.creator_amount<25) {
     //     return NextResponse.json({ error: "Creator amount is too low. below $25!" }, { status: 400 })
     // }
@@ -64,14 +65,14 @@ export async function POST(req: NextRequest) {
           items: [
             {
               recipient_type: "EMAIL",
-              amount: { value: payableAmount, currency: "USD" },
+              amount: { value: payableAmount.toFixed(2), currency: "USD" },
               receiver: creator.paypal_email,
             },
           ],
         }),
       }
     ).then((res) => res.json())
-
+    console.log("Payable Response: ", payoutResponse)
     const payoutId = payoutResponse?.batch_header?.id
     const payoutStatus = payoutResponse?.batch_header?.batch_status
 

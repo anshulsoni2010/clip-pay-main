@@ -384,7 +384,6 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                 </div>
 
                 <div className="space-y-3">
-                  ; ; ; ; ;
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-zinc-600">Creator Payment</p>
                     <p className="text-sm font-medium text-zinc-900">
@@ -476,7 +475,7 @@ export function PayoutsClient({ submissions }: PayoutsClientProps) {
                         </p>
                       </div>
                     )}
-                  ;
+
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-1">
                       <p className="text-sm text-zinc-600">Service Fee</p>

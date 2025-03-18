@@ -98,13 +98,13 @@ export async function POST(req: NextRequest) {
     const budgetPool = Number(
       submission.campaign.remaining_budget || submission.campaign.budget_pool
     )
-    if (totalAmount > budgetPool) {
-      isError = true
-      return NextResponse.json(
-        { error: "Insufficient budget" },
-        { status: 400 }
-      )
-    }
+    // if (totalAmount > budgetPool) {
+    //   isError = true
+    //   return NextResponse.json(
+    //     { error: "Insufficient budget" },
+    //     { status: 400 }
+    //   )
+    // }
 
     const { body, ...httpResponse } = await orderController.ordersCreate({
       body: {

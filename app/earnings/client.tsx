@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
 import { useState } from "react"
-
+import { toast } from "sonner"
 interface Transaction {
   id: string
   amount: number
@@ -121,16 +121,32 @@ export function EarningsClient({
           {availableForPayout > 0 && paypalAccountStatus && (
             <Button
               onClick={async () => {
-                const response = await fetch("/api/paypal/payout", {
-                  method: "POST",
-                  body: "",
-                })
-                const data = await response.json()
-                console.log(data)
+                setIsLoading(true) // Start loading
+                try {
+                  const response = await fetch("/api/paypal/payout", {
+                    method: "POST",
+                  })
+                  const data = await response.json()
+
+                  if (data.error) {
+                    toast.error(`Error: ${data.error}`)
+                  } else {
+                    toast.success("Cashout successful! Refreshing...")
+                    window.location.reload() // Refresh page after success
+                  }
+                } catch (error) {
+                  console.error("Payout error:", error)
+                  toast.error("An error occurred while processing the payout.")
+                } finally {
+                  setIsLoading(false) // Stop loading
+                }
               }}
               className="bg-black hover:bg-black/90 text-white"
+              disabled={isLoading} // Disable button when loading
             >
-              Cash Out (${availableForPayout.toFixed(2)})
+              {isLoading
+                ? "Processing..."
+                : `Cash Out ($${availableForPayout.toFixed(2)})`}
             </Button>
           )}
         </div>

@@ -1,4 +1,6 @@
+import { sendInvoiceEmail } from "@/lib/email"
 import { orderController, paymentsController } from "@/lib/paypal"
+import { createPayPalInvoice } from "@/lib/payPalInvoice"
 import { createServerSupabaseClient } from "@/lib/supabase-server"
 import { NextResponse } from "next/server"
 
@@ -17,6 +19,7 @@ export async function POST(request: Request) {
       data: { user },
     } = await supabase.auth.getUser()
 
+    console.log("user", user)
     if (!user) {
       console.error("[DEBUG] No user found in session")
       return NextResponse.json(
@@ -35,8 +38,20 @@ export async function POST(request: Request) {
     if (order?.status === "COMPLETED") {
       console.log(`[DEBUG] Payment of order ${orderID} completed successfully`)
 
-      const transactionId = order?.purchase_units[0]?.payments?.captures[0]?.id
+      const purchaseUnit = order.purchase_units?.[0]
+      const purchaseUnitPayment = order.purchase_units?.[0].payments
+      const purchaseUnitAmount = purchaseUnitPayment?.captures?.[0]
+      const transactionId = purchaseUnitAmount.id
+      console.log(
+        "[DEBUG] Capture Details:",
+        JSON.stringify(purchaseUnitAmount, null, 2)
+      )
+      console.log("[DEBUG] Amount:", purchaseUnitAmount.amount.value)
+      console.log("[DEBUG] Currency:", purchaseUnitAmount.amount.currency_code)
+
       const submissionId = order.purchase_units[0].reference_id
+      const amount = purchaseUnitAmount.amount.value
+      const currency = purchaseUnitAmount.amount.currency_code
 
       const { error: transactionError } = await supabase
         .from("transactions")
@@ -55,6 +70,15 @@ export async function POST(request: Request) {
         .from("submissions")
         .update({ status: "paid" })
         .eq("id", submissionId)
+
+      await sendInvoiceEmail({
+        email: user.email,
+        name: user.user_metadata.full_name || "User",
+        amount,
+        currency,
+        orderId: orderID,
+        transactionId,
+      })
 
       return NextResponse.json(
         {

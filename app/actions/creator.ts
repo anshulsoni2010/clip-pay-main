@@ -43,6 +43,21 @@ export async function updateCreatorProfile(organizationName: string) {
   }
 }
 
+async function fetchWithTimeout<T>(
+  fn: () => Promise<T>,
+  timeoutMs: number
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeout = setTimeout(
+      () => reject(new Error("Request timed out")),
+      timeoutMs
+    )
+    fn()
+      .then(resolve)
+      .catch(reject)
+      .finally(() => clearTimeout(timeout))
+  })
+}
 export async function updateSubmissionVideoUrl(
   submissionId: string | string[],
   videoUrls: string | string[]
@@ -129,9 +144,9 @@ export async function updateSubmissionVideoUrl(
           return { success: false, error: "Instagram not connected" }
         }
 
-        const views = await getInstagramReelViews(
-          videoUrl,
-          creator.instagram_username
+        const views = await fetchWithTimeout(
+          () => getInstagramReelViews(videoUrl, creator.instagram_username),
+          10000 // 10 seconds timeout
         )
         videoInfo = { views }
       }

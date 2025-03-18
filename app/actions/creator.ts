@@ -146,7 +146,7 @@ export async function updateSubmissionVideoUrl(
 
         const views = await fetchWithTimeout(
           () => getInstagramReelViews(videoUrl, creator.instagram_username),
-          10000 // 10 seconds timeout
+          100000 // 10 seconds timeout
         )
         videoInfo = { views }
       }

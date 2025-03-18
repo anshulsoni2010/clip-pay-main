@@ -6,7 +6,7 @@ import { CreatorCampaign, getCreatorCampaigns } from "./creator-campaigns"
 import { getBrandCampaigns } from "./brand-campaigns"
 import { TikTokAPI } from "@/lib/tiktok"
 import { YouTubeAPI } from "@/lib/youtube"
-
+export const maxDuration = 60
 export interface Brand {
   payment_verified?: boolean
   profile?: {

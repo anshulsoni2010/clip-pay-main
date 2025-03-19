@@ -3,8 +3,14 @@
 import { LandingNav } from "@/components/landing-nav"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, CircleCheckBig } from "lucide-react"
+import { Figtree } from "next/font/google"
+import { LaunchCampaign } from "@/components/launchCampaign"
 
+const figtree = Figtree({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // Choose weights you need
+})
 const brandsContent = {
   hero: {
     title: "Go Viral with Performance-Based Creators",
@@ -238,30 +244,45 @@ export function LandingPage({ view }: LandingPageProps) {
   const content = view === "brands" ? brandsContent : creatorsContent
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen  from-blue-50 to-white">
       <LandingNav view={view} />
 
-      <main className="pt-16">
+      <main className="">
         {/* Hero Section */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-16 mt-16 bg-gradient-to-br from-[#E8F0FF] via-[#E0ECFF] to-[#F5E8FF] rounded-[32px] p-6">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h1 className="text-4xl lg:text-6xl font-bold text-zinc-900">
-              {content.hero.title}
-            </h1>
-            <p className="text-md text-zinc-600 max-w-md mx-auto -mt-4">
-              {content.hero.description}
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <Link href={content.hero.cta.link}>
-                <Button size="lg" className="bg-[#5865F2] hover:bg-[#4752C4]">
-                  {content.hero.cta.text}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+        {/* Hero Section */}
+        <div
+          className={`h-screen flex items-center justify-center text-center bg-[url('/assets/herobg.jpeg')] bg-cover bg-center ${figtree.className}`}
+        >
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="flex justify-center">
+              <h1 className="text-[#2A577D] border border-[#EEE0FC] rounded-full text-center px-6 py-2 font-medium text-lg">
+                {" "}
+                Turn Visitors into Leads – Instantly!
+              </h1>{" "}
             </div>
-            <p className="text-sm text-zinc-500">
-              No credit card needed • Unlimited time on Free plan
+            <h1
+              className={`text-4xl lg:text-6xl font-bold text-[#000000] ${figtree.className}`}
+            >
+              Go Viral with Performance-Based Creators
+            </h1>
+            <p className="font-medium text-[#2D2D2D] max-w-md mx-auto -mt-4">
+              Access 100s of talented creators who work on a CPM basis and
+              skyrocket your brand's visibility.
             </p>
+            <div className="flex items-center justify-center">
+              <LaunchCampaign />
+            </div>
+            {/* <p className="text-sm ">
+      <CircleCheckBig/> No credit card needed • ⭕ Unlimited time on Free plan
+    </p> */}
+            <div className="flex justify-center gap-8">
+              <div className="flex gap-2">
+                <CircleCheckBig /> No credit card needed
+              </div>
+              <div className="flex gap-2">
+                <CircleCheckBig /> Unlimited time on Free plan
+              </div>
+            </div>
           </div>
         </div>
 

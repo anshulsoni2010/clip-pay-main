@@ -225,16 +225,67 @@ const creatorsContent = {
         number: 2,
         title: "Browse Campaigns",
         description: "Find brands that match your style",
+        icon: (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4.5V19.5M19.5 12H4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ),
       },
       {
         number: 3,
         title: "Create Content",
         description: "Produce videos based on campaign briefs",
+        icon: (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4.5V19.5M19.5 12H4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ),
       },
       {
         number: 4,
         title: "Earn Money",
         description: "Get paid for the views your content generates",
+        icon: (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4.5V19.5M19.5 12H4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ),
       },
     ],
   },

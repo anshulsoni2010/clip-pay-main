@@ -6,6 +6,9 @@ import Link from "next/link"
 import { ArrowRight, CircleCheckBig } from "lucide-react"
 import { Figtree } from "next/font/google"
 import { LaunchCampaign } from "@/components/launchCampaign"
+import Image from "next/image"
+import FAQSection from "./FAQSection"
+import Footer from "./Footer"
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -22,12 +25,12 @@ const brandsContent = {
     },
   },
   features: {
-    title: "Why Brands love ClipPay",
+    title: "Why Brands love",
     items: [
       {
         title: "Performance-Based Model",
         description:
-          "Only pay for actual performance, ensuring your marketing budget is spent efficiently.",
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
         icon: (
           <path
             strokeLinecap="round"
@@ -40,7 +43,7 @@ const brandsContent = {
       {
         title: "Cost-Effective Advertising",
         description:
-          "Only pay for actual performance, ensuring your marketing budget is spent efficiently.",
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
         icon: (
           <path
             strokeLinecap="round"
@@ -53,7 +56,7 @@ const brandsContent = {
       {
         title: "Access to Diverse Creators",
         description:
-          "Connect with a diverse pool of talented creators across different niches and platforms.",
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
         icon: (
           <path
             strokeLinecap="round"
@@ -66,7 +69,7 @@ const brandsContent = {
       {
         title: "Real-time Analytics",
         description:
-          "Track campaign performance in real-time with detailed analytics and insights.",
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique.",
         icon: (
           <path
             strokeLinecap="round"
@@ -79,22 +82,77 @@ const brandsContent = {
     ],
   },
   howItWorks: {
-    title: "How it Works for Brands",
+    title: "How it Works for",
+    title2: "Brands",
     steps: [
       {
         number: 1,
         title: "Launch a Campaign",
-        description: "Set your campaign goals, budget, and requirements",
+        description:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+        icon: (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4.5V19.5M19.5 12H4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ),
       },
       {
         number: 2,
         title: "Creators Submit Videos",
-        description: "Review and approve creator submissions",
+        description:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+        icon: (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4.5V19.5M19.5 12H4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ),
       },
       {
         number: 3,
         title: "Watch the Views Roll In",
-        description: "Track performance and only pay for results",
+        description:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+        icon: (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4.5V19.5M19.5 12H4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ),
       },
     ],
   },
@@ -155,7 +213,8 @@ const creatorsContent = {
     ],
   },
   howItWorks: {
-    title: "How it Works for Creators",
+    title: "How it Works for",
+    title2: "Creators",
     steps: [
       {
         number: 1,
@@ -191,22 +250,25 @@ function FeatureCard({
   icon: React.ReactNode
 }) {
   return (
-    <div className="py-9 px-4 relative bg-[#f5f5f5] rounded-lg drop-shadow-md">
-      <div className="absolute lg:right-[10px] lg:top-[24px] md:right-[8px] md:top-[24px] top-[10px] right-[10px]">
-        <div className="w-12 h-12 rounded-full bg-[#ccc]/10 flex items-center justify-center">
-          <svg
-            className="w-6 h-6 text-[#333]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            {icon}
-          </svg>
+    <div className="border-[3px] border-[#C9D5ED]  p-4 rounded-3xl">
+      <div
+        className="py-9 px-4 relative bg-[#FFFFFF] rounded-2xl drop-shadow-md"
+        style={{ fontFamily: "'Satoshi Regular'" }}
+      >
+        <div className="flex flex-col gap-1">
+          <div className="w-12 h-12 rounded-full">
+            <svg
+              className=" text-[#333]"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {icon}
+            </svg>
+          </div>
+          <div className="font-semibold">{title}</div>
+          <div className="text-[#444444] pr-5">{description}</div>
         </div>
-      </div>
-      <div>
-        <h3 className="text-base font-semibold text-zinc-700 mb-2">{title}</h3>
-        <p className="text-sm text-zinc-500">{description}</p>
       </div>
     </div>
   )
@@ -216,22 +278,73 @@ function StepCard({
   number,
   title,
   description,
+  icon,
+  position,
 }: {
   number: number
   title: string
   description: string
+  icon: React.ReactNode
+  position: "left" | "right"
 }) {
   return (
-    <div className="relative">
-      <div className="flex items-start mb-4 justify-start align-top">
-        <div className="w-8 h-8 rounded-full border-2 border-zinc-600 flex items-center justify-center text-zinc-600 font-semibold">
-          {number}
-        </div>
-        <div className="ml-3">
-          <h3 className="text-lg font-semibold text-zinc-900">{title}</h3>
-          <p className="text-zinc-600">{description}</p>
+    <div
+      className={`relative w-full max-w-lg mx-auto md:mx-20 ${
+        position === "left" ? "md:self-start" : "md:self-end"
+      }`}
+    >
+      {/* Large background step number */}
+      <div
+        className="absolute md:flex items-center gap-2 text-6xl md:text-9xl font-extrabold text-[#DFEEF6] select-none uppercase hidden"
+        style={{
+          top: "50%",
+          transform: "translateY(-50%)",
+          left: position === "left" ? "calc(100% + 30px)" : "auto",
+          right: position === "right" ? "calc(100% + 30px)" : "auto",
+          whiteSpace: "nowrap",
+        }}
+      >
+        STEP {number.toString().padStart(2, "0")}
+      </div>
+
+      {/* Card */}
+      <div className="border-[3px] border-[#C9D5ED]  p-4 rounded-3xl">
+        <div className="py-6 px-6 md:px-8 relative bg-white rounded-2xl shadow-md w-full z-10">
+          <div className="flex flex-col gap-3">
+            <div className="w-12 h-12 flex items-center justify-center">
+              <div className="text-black">{icon}</div>
+            </div>
+            <div className="font-semibold text-lg md:text-xl">{title}</div>
+            <div className="text-gray-600 text-sm md:text-base">
+              {description}
+            </div>
+          </div>
         </div>
       </div>
+      {/* Connecting dotted line */}
+      {number < 3 && (
+        <>
+          {position === "left" ? (
+            <div className="hidden md:block absolute -right-16  top-56 md:top-80">
+              <Image
+                src="/assets/dottedline2.svg"
+                alt="Dotted Line"
+                width={80}
+                height={10}
+              />
+            </div>
+          ) : (
+            <div className="hidden md:block absolute -left-20 top-80 rotate-180">
+              <Image
+                src="/assets/dottedline.svg"
+                alt="Dotted Line"
+                width={80}
+                height={10}
+              />
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
@@ -255,7 +368,7 @@ export function LandingPage({ view }: LandingPageProps) {
         >
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="flex justify-center">
-              <h1 className="text-[#2A577D] border border-[#EEE0FC] rounded-full text-center px-6 py-2 font-medium text-lg">
+              <h1 className="text-[#2A577D] border border-[#EEE0FC] rounded-full text-center px-6 py-2 font-medium md:text-lg">
                 {" "}
                 Turn Visitors into Leads – Instantly!
               </h1>{" "}
@@ -265,7 +378,7 @@ export function LandingPage({ view }: LandingPageProps) {
             >
               Go Viral with Performance-Based Creators
             </h1>
-            <p className="font-medium text-[#2D2D2D] max-w-md mx-auto -mt-4">
+            <p className="font-medium text-[#2D2D2D] max-w-md mx-4 md:mx-auto -mt-4">
               Access 100s of talented creators who work on a CPM basis and
               skyrocket your brand's visibility.
             </p>
@@ -275,11 +388,11 @@ export function LandingPage({ view }: LandingPageProps) {
             {/* <p className="text-sm ">
       <CircleCheckBig/> No credit card needed • ⭕ Unlimited time on Free plan
     </p> */}
-            <div className="flex justify-center gap-8">
-              <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row  justify-center gap-8 mx-4">
+              <div className="flex gap-2 justify-center">
                 <CircleCheckBig /> No credit card needed
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 justify-center">
                 <CircleCheckBig /> Unlimited time on Free plan
               </div>
             </div>
@@ -287,29 +400,49 @@ export function LandingPage({ view }: LandingPageProps) {
         </div>
 
         {/* Features Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-4">
-          <h2 className="text-3xl font-bold text-center text-black mb-8">
-            {content.features.title}
-          </h2>
+        <section className="bg-[#EAF8FF] h-full">
           <div
-            className={`grid gap-8 ${
-              view === "brands"
-                ? "md:grid-cols-2 lg:grid-cols-2"
-                : "md:grid-cols-3 lg:grid-cols-3"
-            }`}
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-4 "
+            style={{ fontFamily: "'Satoshi Regular'" }}
           >
-            {content.features.items.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                title={feature.title}
-                description={feature.description}
-                icon={feature.icon}
-              />
-            ))}
+            <div className="flex justify-center">
+              <button className="bg-black text-white flex gap-4 items-center px-6 py-2 text-sm font-bold rounded-full   hover:bg-gray-900 transition">
+                How Clippay Works
+              </button>
+            </div>
+            <h2
+              className={`text-5xl font-bold text-center text-black mt-4  ${figtree.className}`}
+            >
+              {content.features.title}{" "}
+              <span className="text-[#00000099] font-extrabold">ClipPay</span>
+            </h2>
+            <div className="flex justify-center">
+              <h2 className="text-center text-[#2D2D2D] max-w-xl m-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
+                mollitia, molestiae quas vel sint commodi repudiandae
+                consequuntur voluptatum{" "}
+              </h2>
+            </div>
+            <div
+              className={`grid gap-8 md:mx-6 ${
+                view === "brands"
+                  ? "md:grid-cols-2 lg:grid-cols-2"
+                  : "md:grid-cols-3 lg:grid-cols-3"
+              }`}
+            >
+              {content.features.items.map((feature, index) => (
+                <FeatureCard
+                  key={index}
+                  title={feature.title}
+                  description={feature.description}
+                  icon={feature.icon}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-gradient-to-br from-[#E8F0FF] via-[#E0ECFF] to-[#F5E8FF] rounded-[32px] p-6">
             <h2 className="text-3xl font-bold text-zinc-900 mb-8 text-center">
               Join the ClipPay Revolution
@@ -330,37 +463,56 @@ export function LandingPage({ view }: LandingPageProps) {
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h2 className="text-3xl text-zinc-900 font-bold text-center mb-8">
-            {content.howItWorks.title}
-          </h2>
-          <div
-            className={`grid gap-8 items-center justify-center ${
-              view === "brands"
-                ? "md:grid-cols-2 lg:grid-cols-2"
-                : "md:grid-cols-2 lg:grid-cols-4"
-            }`}
-          >
-            {content.howItWorks.steps.map((step) => (
-              <StepCard
-                key={step.number}
-                number={step.number}
-                title={step.title}
-                description={step.description}
-              />
-            ))}
+        {/* How it Work */}
+        <section
+          className="bg-[#EAF8FF] pt-20"
+          style={{ fontFamily: "'Satoshi Regular'" }}
+        >
+          <div className="flex justify-center">
+            <button className="bg-black text-white flex gap-4 items-center px-6 py-2 text-sm font-bold rounded-full   hover:bg-gray-900 transition">
+              How Clippay Works
+            </button>
           </div>
-        </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h2
+              className={`text-5xl font-bold text-center text-black mt-4  ${figtree.className}`}
+            >
+              {content.howItWorks.title}{" "}
+              <span className="text-[#00000099] font-extrabold">
+                {content.howItWorks.title2}
+              </span>
+            </h2>
+            <div className="flex justify-center">
+              <h2 className="text-center text-[#2D2D2D] max-w-xl m-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
+                mollitia, molestiae quas vel sint commodi repudiandae
+                consequuntur voluptatum{" "}
+              </h2>
+            </div>
+            <div className="flex flex-col relative gap-20 my-10 px-4 md:px-0">
+              {content.howItWorks.steps.map((step, index) => (
+                <StepCard
+                  key={step.number}
+                  number={step.number}
+                  title={step.title}
+                  description={step.description}
+                  icon={step.icon}
+                  position={index % 2 === 0 ? "left" : "right"}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
 
-        <h2 className="text-3xl font-bold text-center mb-6 mt-6 text-zinc-900">
+        {/* <h2 className="text-3xl font-bold text-center mb-6 mt-6 text-zinc-900">
           {view === "brands"
             ? "Ready to Boost Your Brand with Creator Content?"
             : "Ready to Monetize Your Creativity?"}
-        </h2>
+        </h2> */}
         {/* CTA Section */}
-        <div className="bg-[#7a7aaa] border-y border-[#5865F2]/10">
+        {/* <div className="bg-[#7a7aaa] border-y border-[#5865F2]/10">
           <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mx-auto">
             <div className="text-center flex items-center justify-center">
               <p className="text-lg text-white mr-4">
@@ -379,27 +531,11 @@ export function LandingPage({ view }: LandingPageProps) {
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
 
+        <FAQSection />
         {/* Footer */}
-        <footer className="bg-white py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="flex items-center space-x-4 text-sm text-zinc-600">
-                <Link href="/legal/terms" className="hover:text-zinc-900">
-                  Terms of Service
-                </Link>
-                <span className="text-zinc-300">•</span>
-                <Link href="/legal/privacy" className="hover:text-zinc-900">
-                  Privacy Policy
-                </Link>
-              </div>
-              <p className="text-sm text-zinc-500">
-                © {new Date().getFullYear()} Clip Pay. All rights reserved.
-              </p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </div>
   )

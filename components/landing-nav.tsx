@@ -19,12 +19,19 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-6 text-gray-800">
+          {/* <Link href="/brands" className="text-sm">
+           Login
+          </Link>
+        
+          <Link href="/creators" className="text-sm">
+           Signup
+          </Link> */}
           <Link href="/brands" className="text-sm">
             Home
           </Link>
-          <span className="text-gray-400">·</span>
+        
           <Link href="/creators" className="text-sm">
-            Contact
+            Creators
           </Link>
           <Link
             href="/signin"
@@ -47,6 +54,12 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
       {/* Mobile Dropdown Menu */}
       {isOpen && (
         <div className="absolute top-14 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-md shadow-lg rounded-lg w-[90%] max-w-xs flex flex-col items-center p-4 md:hidden">
+          <Link href="/brands" className="text-sm py-2 w-full text-center">
+           Login 
+          </Link>
+          <Link href="/creators" className="text-sm py-2 w-full text-center">
+            Signup
+          </Link>
           <Link href="/brands" className="text-sm py-2 w-full text-center">
             Home
           </Link>

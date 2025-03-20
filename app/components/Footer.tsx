@@ -2,7 +2,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { LaunchCampaign } from "@/components/launchCampaign"
 
-export default function Footer() {
+export default function Footer({ view }: { view: "brands" | "creators" }) {
   return (
     <footer className="w-full">
       {/* Top section with gradient background */}
@@ -21,7 +21,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <LaunchCampaign />
+          <LaunchCampaign view={view} />
           {/* </div> */}
         </div>
       </div>

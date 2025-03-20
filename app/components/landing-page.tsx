@@ -427,14 +427,13 @@ export function LandingPage({ view }: LandingPageProps) {
             <h1
               className={`text-4xl lg:text-6xl font-bold text-[#000000] ${figtree.className}`}
             >
-              Go Viral with Performance-Based Creators
+              {content.hero.title}
             </h1>
             <p className="font-medium text-[#2D2D2D] max-w-md mx-4 md:mx-auto -mt-4">
-              Access 100s of talented creators who work on a CPM basis and
-              skyrocket your brand's visibility.
+              {content.hero.description}
             </p>
             <div className="flex items-center justify-center">
-              <LaunchCampaign />
+              <LaunchCampaign view={view} />
             </div>
             {/* <p className="text-sm ">
       <CircleCheckBig/> No credit card needed • ⭕ Unlimited time on Free plan
@@ -586,7 +585,7 @@ export function LandingPage({ view }: LandingPageProps) {
 
         <FAQSection />
         {/* Footer */}
-        <Footer />
+        <Footer view={view} />
       </main>
     </div>
   )

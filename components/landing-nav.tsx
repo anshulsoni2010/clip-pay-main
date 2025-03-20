@@ -30,11 +30,22 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
             Home
           </Link>
         
-          <Link href="/creators" className="text-sm">
+        
+          {view === "creators" ? (
+            <>
+              <Link href="/" className="text-sm">
+            Brands
+          </Link></>
+          ) :(
+
+            <>
+            <Link href="/creators" className="text-sm">
             Creators
           </Link>
+            </>
+          ) }
           <Link
-            href="/signin"
+           href={view==="brands" ? '/signup/brand':"/signup/creator"}
             className="flex items-center text-sm bg-black text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-900 transition"
           >
             Get Started <ArrowRight className="w-3 h-3 ml-2" />

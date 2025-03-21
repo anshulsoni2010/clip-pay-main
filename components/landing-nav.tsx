@@ -26,20 +26,20 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
           <Link href="/creators" className="text-sm">
            Signup
           </Link> */}
-          <Link href="/brands" className="text-sm">
+          <Link href="/brands" className="text-sm text-black">
             Home
           </Link>
         
         
           {view === "creators" ? (
             <>
-              <Link href="/" className="text-sm">
+              <Link href="/" className="text-sm text-black">
             Brands
           </Link></>
           ) :(
 
             <>
-            <Link href="/creators" className="text-sm">
+            <Link href="/creators" className="text-sm text-black">
             Creators
           </Link>
             </>
@@ -54,11 +54,11 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 text-black"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isOpen ? <X className="w-6 h-6 text-black" /> : <Menu className="w-6 h-6 text-black" />}
         </button>
       </div>
 
@@ -66,18 +66,18 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
       {isOpen && (
         <div className="absolute top-14 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-md shadow-lg rounded-lg w-[90%] max-w-xs flex flex-col items-center p-4 md:hidden">
         
-          <Link href="/brands" className="text-sm py-2 w-full text-center">
+          <Link href="/brands" className="text-sm py-2 w-full text-center text-black">
             Home
           </Link>
           {view === "creators" ? (
             <>
-              <Link href="/" className="text-sm py-2 w-full text-center">
+              <Link href="/" className="text-sm py-2 w-full text-center text-black">
             Brands
           </Link></>
           ) :(
 
             <>
-            <Link href="/creators" className="text-sm py-2 w-full text-center">
+            <Link href="/creators" className="text-sm py-2 w-full text-center text-black">
             Creators
           </Link>
             </>

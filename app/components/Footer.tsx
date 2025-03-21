@@ -13,11 +13,14 @@ export default function Footer({ view }: { view: "brands" | "creators" }) {
               className="text-3xl md:text-4xl font-semibold text-black mb-4"
               style={{ fontFamily: "'THICCCBOI Regular'" }}
             >
-              Ready to Boost Your Brand with Creator Content?
+              {view === "creators"
+                ? "Ready to Monetize Your Creativity?"
+                : " Ready to Boost Your Brand with Creator Content?"}
             </h2>
             <p className="text-[#555555]">
-              Lorem ipsum dolor sit amet consectetur adipiscing elit maxime
-              mollitia molestiae quas vel sint commodi repudiandae consequuntur
+              {view === "creators"
+                ? "Join ClipPay today and start earning for every view your content generates"
+                : "Leverage the power of authentic creator content and maximize your brand’s reach effortlessly"}
             </p>
           </div>
 
@@ -123,14 +126,14 @@ export default function Footer({ view }: { view: "brands" | "creators" }) {
           <div className="text-sm text-center md:text-left">
             All Rights Reserved |
             <Link
-              href="#"
+              href="/legal/terms"
               className="ml-1 hover:text-gray-400 transition-colors text-[#B6B0FF]"
             >
               Terms and Conditions
             </Link>{" "}
             |
             <Link
-              href="#"
+              href="/legal/privacy"
               className="ml-1 hover:text-gray-400 transition-colors text-[#B6B0FF]"
             >
               Privacy Policy

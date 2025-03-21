@@ -65,20 +65,25 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
       {/* Mobile Dropdown Menu */}
       {isOpen && (
         <div className="absolute top-14 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-md shadow-lg rounded-lg w-[90%] max-w-xs flex flex-col items-center p-4 md:hidden">
-          <Link href="/brands" className="text-sm py-2 w-full text-center">
-           Login 
-          </Link>
-          <Link href="/creators" className="text-sm py-2 w-full text-center">
-            Signup
-          </Link>
+        
           <Link href="/brands" className="text-sm py-2 w-full text-center">
             Home
           </Link>
-          <Link href="/creators" className="text-sm py-2 w-full text-center">
-            Contact
+          {view === "creators" ? (
+            <>
+              <Link href="/" className="text-sm py-2 w-full text-center">
+            Brands
+          </Link></>
+          ) :(
+
+            <>
+            <Link href="/creators" className="text-sm py-2 w-full text-center">
+            Creators
           </Link>
+            </>
+          ) }
           <Link
-            href="/signin"
+              href={view==="brands" ? '/signup/brand':"/signup/creator"}
             className="flex items-center justify-center text-sm bg-black text-white p-2 px-6 border rounded-full w-full"
           >
             Get Started <ArrowRight className="w-3 h-3 ml-2" />

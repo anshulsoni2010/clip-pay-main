@@ -11,38 +11,68 @@ type FAQItem = {
 
 const figtree = Figtree({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // Choose weights you need
+  weight: ["400", "500", "600", "700"],
 })
-export default function FAQSection() {
+
+export default function FAQSection({ view }: { view: "brands" | "creators" }) {
   const [openIndex, setOpenIndex] = useState(0)
 
-  const faqItems: FAQItem[] = [
-    {
-      question: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
-    },
-    {
-      question: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio.",
-    },
-    {
-      question: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam.",
-    },
-    {
-      question: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis.",
-    },
-    {
-      question: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum.",
-    },
-  ]
+  const faqItems: FAQItem[] =
+    view === "brands"
+      ? [
+          {
+            question: "How does the performance-based model work?",
+            answer:
+              "You only pay when your content generates real engagement. Payment is tied to actual views and audience interaction.",
+          },
+          {
+            question: "Can I choose which creators to work with?",
+            answer:
+              "Yes! You can review creator profiles and approve submissions that align with your brand’s goals.",
+          },
+          {
+            question: "What types of content can I expect?",
+            answer:
+              "Creators produce high-quality videos optimized for platforms like YouTube, Instagram, and TikTok.",
+          },
+          {
+            question: "How do I track my campaign’s performance?",
+            answer:
+              "ClipPay provides real-time analytics and detailed insights to help you measure and optimize your campaigns.",
+          },
+          {
+            question: "Are there any hidden costs?",
+            answer:
+              "No hidden fees. You only pay for actual performance based on verified engagement.",
+          },
+        ]
+      : [
+          {
+            question: "How do I get started on ClipPay?",
+            answer:
+              "Sign up, create your profile, and start browsing campaigns. It takes less than 5 minutes to get started.",
+          },
+          {
+            question: "How do I get paid?",
+            answer:
+              "Payments are based on actual views and engagement. Once the campaign is approved, you’ll receive your earnings securely.",
+          },
+          {
+            question: "Are there any upfront costs?",
+            answer:
+              "No, ClipPay is completely free to join. You only pay a small platform fee when you earn.",
+          },
+          {
+            question: "What types of content are accepted?",
+            answer:
+              "ClipPay accepts videos in various formats across social platforms like YouTube, Instagram, and TikTok.",
+          },
+          {
+            question: "Can I choose which campaigns to work on?",
+            answer:
+              "Absolutely! You have full control over which campaigns align with your style and interests.",
+          },
+        ]
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(index === openIndex ? -1 : index)
@@ -65,9 +95,8 @@ export default function FAQSection() {
             <span className="text-black">Asked Questions</span>
           </h2>
           <p className="text-center text-gray-600 max-w-xl">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-            mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-            voluptatum
+            Get answers to the most common questions about our platform and how
+            it works for {view === "brands" ? "brands" : "creators"}.
           </p>
         </div>
 

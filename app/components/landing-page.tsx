@@ -6,10 +6,15 @@ import Link from "next/link"
 import { ArrowRight, CircleCheckBig } from "lucide-react"
 import { Figtree } from "next/font/google"
 import { LaunchCampaign } from "@/components/launchCampaign"
-import Image from "next/image"
+import Image, { StaticImageData } from "next/image"
 import FAQSection from "./FAQSection"
 import Footer from "./Footer"
-
+import joinpay from "@/public/assets/joinpay.svg"
+import client2 from "@/public/assets/client2.svg"
+import client3 from "@/public/assets/client3.svg"
+import brand1 from "@/public/assets/brand1.svg"
+import brand2 from "@/public/assets/brand2.svg"
+import brand3 from "@/public/assets/brand3.svg"
 const figtree = Figtree({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"], // Choose weights you need
@@ -90,69 +95,21 @@ const brandsContent = {
         title: "Launch a Campaign",
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
-        icon: (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4.5V19.5M19.5 12H4.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
+        icon: brand1,
       },
       {
         number: 2,
         title: "Creators Submit Videos",
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
-        icon: (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4.5V19.5M19.5 12H4.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
+        icon: brand2,
       },
       {
         number: 3,
         title: "Watch the Views Roll In",
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
-        icon: (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4.5V19.5M19.5 12H4.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
+        icon: brand3,
       },
     ],
   },
@@ -169,12 +126,12 @@ const creatorsContent = {
     },
   },
   features: {
-    title: "Why Creators love ClipPay",
+    title: "Why Creators love",
     items: [
       {
         title: "Performance-Based Pay",
         description:
-          "Get paid for every view your content generates. The more engagement, the more you earn!",
+          "Get rewarded for your effort. The more views your content generates, the more you earn—ensuring fair pay based on actual engagement, not just content submission",
         icon: (
           <path
             strokeLinecap="round"
@@ -187,7 +144,7 @@ const creatorsContent = {
       {
         title: "Work with Top Brands",
         description:
-          "Connect with established brands looking for authentic creators like you.",
+          "Collaborate with trusted brands across different industries that value authentic creator content. Build your portfolio and grow your audience while getting paid.",
         icon: (
           <path
             strokeLinecap="round"
@@ -200,7 +157,7 @@ const creatorsContent = {
       {
         title: "Flexible Campaigns",
         description:
-          "Choose projects that match your style and create on your schedule.",
+          "Choose campaigns that align with your content style and schedule. Work when you want, how you want, and maintain creative freedom with every project.",
         icon: (
           <path
             strokeLinecap="round"
@@ -218,75 +175,47 @@ const creatorsContent = {
     steps: [
       {
         number: 1,
-        title: "Join Clip Pay",
-        description: "Create your Creator Account",
+        title: "Join & Filter",
+        description:
+          "Sign up and create your profile in just a few minutes to unlock access to a wide range of brand campaigns. Whether you're an influencer, creator, or marketer, you'll be able to explore exciting opportunities, collaborate with top brands, and grow your network. Don't miss out—get started today and take the first step toward monetizing your influence!",
+        icon: joinpay,
       },
       {
         number: 2,
-        title: "Browse Campaigns",
-        description: "Find brands that match your style",
-        icon: (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4.5V19.5M19.5 12H4.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
+        title: "Create & Submit",
+        description:
+          "Explore a variety of opportunities tailored to your niche and content style. Browse through campaigns from top brands, filter based on your interests, and select the ones that align best with your audience. With countless options available, you can find the perfect fit to showcase your creativity and maximize your earning potential",
+        icon: client2,
       },
       {
         number: 3,
-        title: "Create Content",
-        description: "Produce videos based on campaign briefs",
-        icon: (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4.5V19.5M19.5 12H4.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
+        title: "Track & Cash Out",
+        description:
+          "Create high-quality videos that align with the brand’s vision by following their brief and guidelines. Ensure your content meets their expectations by maintaining authenticity, creativity, and professionalism. Deliver engaging videos that resonate with your audience while effectively representing the brand’s message and values",
+        icon: client3,
       },
-      {
-        number: 4,
-        title: "Earn Money",
-        description: "Get paid for the views your content generates",
-        icon: (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4.5V19.5M19.5 12H4.5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
-      },
+      // {
+      //   number: 4,
+      //   title: "Earn Money",
+      //   description: "Earn money for every view your content receives once it has been approved. Maximize your earnings by creating engaging, high-quality content that resonates with your audience. The more views you generate, the more you get paid—turn your creativity into a steady income stream!",
+      //   icon: (
+      //     <svg
+      //       width="24"
+      //       height="24"
+      //       viewBox="0 0 24 24"
+      //       fill="none"
+      //       xmlns="http://www.w3.org/2000/svg"
+      //     >
+      //       <path
+      //         d="M12 4.5V19.5M19.5 12H4.5"
+      //         stroke="currentColor"
+      //         strokeWidth="2"
+      //         strokeLinecap="round"
+      //         strokeLinejoin="round"
+      //       />
+      //     </svg>
+      //   ),
+      // },
     ],
   },
 }
@@ -335,7 +264,7 @@ function StepCard({
   number: number
   title: string
   description: string
-  icon: React.ReactNode
+  icon: StaticImageData
   position: "left" | "right"
 }) {
   return (
@@ -363,7 +292,8 @@ function StepCard({
         <div className="py-6 px-6 md:px-8 relative bg-white rounded-2xl shadow-md w-full z-10">
           <div className="flex flex-col gap-3">
             <div className="w-12 h-12 flex items-center justify-center">
-              <div className="text-black">{icon}</div>
+              {/* <div className="text-black">{icon}</div> */}
+              <Image src={icon} alt="Step Icon" />
             </div>
             <div className="font-semibold text-lg md:text-xl">{title}</div>
             <div className="text-gray-600 text-sm md:text-base">
@@ -583,7 +513,7 @@ export function LandingPage({ view }: LandingPageProps) {
           </div>
         </div> */}
 
-        <FAQSection />
+        <FAQSection view={view} />
         {/* Footer */}
         <Footer view={view} />
       </main>

@@ -31,11 +31,12 @@ const brandsContent = {
   },
   features: {
     title: "Why Brands love",
+    description: "Boost ROI and Visibility with Authentic Creator Content",
     items: [
       {
         title: "Performance-Based Model",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+          "Pay only for actual views and engagement. ClipPay ensures that every dollar you invest generates real results, making your campaigns efficient and ROI-driven. Maximize your impact with transparent and performance-based pricing. Reach the right audience and drive meaningful interactions effortlessly",
         icon: (
           <path
             strokeLinecap="round"
@@ -48,7 +49,7 @@ const brandsContent = {
       {
         title: "Cost-Effective Advertising",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+          "Achieve maximum impact without overspending. ClipPay connects you with creators who deliver high-quality content while optimizing your ad budget. Get real engagement, real results, and the best value for your investment. Turn every campaign into a success with data-driven performance insights.",
         icon: (
           <path
             strokeLinecap="round"
@@ -61,7 +62,7 @@ const brandsContent = {
       {
         title: "Access to Diverse Creators",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+          "Collaborate with a wide range of talented creators across multiple niches and platforms, ensuring your content reaches the right audience. Leverage authentic storytelling to boost brand credibility and engagement. Gain full control over your campaigns with real-time performance tracking and insights.",
         icon: (
           <path
             strokeLinecap="round"
@@ -74,7 +75,7 @@ const brandsContent = {
       {
         title: "Real-time Analytics",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique.",
+          "Track your campaign’s success with detailed, real-time insights. Get performance data that helps you optimize and maximize results. Make data-driven decisions to enhance engagement and ROI. Stay ahead of the competition with AI-powered analytics and trend predictions",
         icon: (
           <path
             strokeLinecap="round"
@@ -95,21 +96,21 @@ const brandsContent = {
         number: 1,
         title: "Launch a Campaign",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+          "Set your goals, define your budget, and share your content brief with creators. Seamlessly connect with the right talent to bring your vision to life. Ensure your brand message is delivered authentically while maintaining full creative control. Watch your campaign unfold with measurable results and real engagement.",
         icon: brand1,
       },
       {
         number: 2,
         title: "Creators Submit Videos",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+          "Review, approve, and publish content created by top-performing creators. Ensure every piece aligns with your brand’s vision before going live. Gain full control over the creative process while leveraging influencer expertise to maximize impact. Track performance in real-time and refine your strategy for even better results.",
         icon: brand2,
       },
       {
         number: 3,
         title: "Watch the Views Roll In",
         description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium optio, eaque rerum! Provident similique",
+          "Track performance in real-time and pay only for verified engagement. Gain valuable insights with detailed analytics to optimize your campaigns. Maximize your ROI by reaching the right audience with authentic, high-impact content. Eliminate guesswork with data-driven decisions that drive real results. Stay ahead of the competition with AI-powered tracking and performance metrics.",
         icon: brand3,
       },
     ],
@@ -128,6 +129,7 @@ const creatorsContent = {
   },
   features: {
     title: "Why Creators love",
+    description: "Unlock Unlimited Earning Potential and Work on Your Terms",
     items: [
       {
         title: "Performance-Based Pay",
@@ -307,23 +309,25 @@ function StepCard({
         </div>
       </div>
       {/* Connecting dotted line */}
+      {/* Connecting dotted line */}
+      {/* Connecting dotted line */}
       {number < 3 && (
         <>
           {position === "left" ? (
-            <div className="hidden md:block absolute -right-16  top-56 md:top-80">
+            <div className="hidden md:block absolute right-[-70px] top-[125%] translate-y-[-125%]">
               <Image
                 src="/assets/dottedline2.svg"
                 alt="Dotted Line"
-                width={80}
+                width={120}
                 height={10}
               />
             </div>
           ) : (
-            <div className="hidden md:block absolute -left-20 top-80 rotate-180">
+            <div className="hidden md:block absolute left-[-70px] top-[125%] translate-y-[-125%] rotate-180">
               <Image
                 src="/assets/dottedline.svg"
                 alt="Dotted Line"
-                width={80}
+                width={120}
                 height={10}
               />
             </div>
@@ -402,9 +406,7 @@ export function LandingPage({ view }: LandingPageProps) {
             </h2>
             <div className="flex justify-center">
               <h2 className="text-center text-[#2D2D2D] max-w-xl m-4">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-                mollitia, molestiae quas vel sint commodi repudiandae
-                consequuntur voluptatum{" "}
+                {content.features.description}
               </h2>
             </div>
             <div
@@ -470,9 +472,7 @@ export function LandingPage({ view }: LandingPageProps) {
             </h2>
             <div className="flex justify-center">
               <h2 className="text-center text-[#2D2D2D] max-w-xl m-4">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-                mollitia, molestiae quas vel sint commodi repudiandae
-                consequuntur voluptatum{" "}
+                {content.howItWorks.description}
               </h2>
             </div>
             <div className="flex flex-col relative gap-20 my-10 px-4 md:px-0">

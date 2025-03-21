@@ -110,7 +110,7 @@ export async function GET(request: Request) {
     response.cookies.set(cookieName, JSON.stringify(data.session), {
       path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "development",
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })

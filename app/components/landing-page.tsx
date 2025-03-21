@@ -89,6 +89,7 @@ const brandsContent = {
   howItWorks: {
     title: "How it Works for",
     title2: "Brands",
+    description: "Seamless Process to Launch, Manage, and Scale Campaigns",
     steps: [
       {
         number: 1,
@@ -172,6 +173,7 @@ const creatorsContent = {
   howItWorks: {
     title: "How it Works for",
     title2: "Creators",
+    description: "Seamless Process to Earn",
     steps: [
       {
         number: 1,
@@ -246,7 +248,7 @@ function FeatureCard({
               {icon}
             </svg>
           </div>
-          <div className="font-semibold">{title}</div>
+          <div className="font-semibold text-black">{title}</div>
           <div className="text-[#444444] pr-5">{description}</div>
         </div>
       </div>
@@ -295,7 +297,9 @@ function StepCard({
               {/* <div className="text-black">{icon}</div> */}
               <Image src={icon} alt="Step Icon" />
             </div>
-            <div className="font-semibold text-lg md:text-xl">{title}</div>
+            <div className="font-semibold text-lg md:text-xl text-black">
+              {title}
+            </div>
             <div className="text-gray-600 text-sm md:text-base">
               {description}
             </div>
@@ -369,10 +373,10 @@ export function LandingPage({ view }: LandingPageProps) {
       <CircleCheckBig/> No credit card needed • ⭕ Unlimited time on Free plan
     </p> */}
             <div className="flex flex-col md:flex-row  justify-center gap-8 mx-4">
-              <div className="flex gap-2 justify-center">
+              <div className="flex gap-2 justify-center text-black">
                 <CircleCheckBig /> No credit card needed
               </div>
-              <div className="flex gap-2 justify-center">
+              <div className="flex gap-2 justify-center text-black">
                 <CircleCheckBig /> Unlimited time on Free plan
               </div>
             </div>

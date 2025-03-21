@@ -11,7 +11,7 @@ export function LandingNav({ view }: { view: "brands" | "creators" }) {
       <div className="flex items-center justify-between w-full bg-white/50 backdrop-blur-md rounded-full px-6 py-2">
         <Link
           href="/"
-          className="font-bold text-lg"
+          className="font-bold text-lg text-black"
           style={{ fontFamily: "'Venite Adoremus Regular', sans-serif" }}
         >
           Clip Pay

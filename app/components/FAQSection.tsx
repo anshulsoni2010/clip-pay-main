@@ -12,6 +12,8 @@ type FAQItem = {
 const figtree = Figtree({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+  fallback: ["Arial", "sans-serif"], // Fallback fonts
 })
 
 export default function FAQSection({ view }: { view: "brands" | "creators" }) {

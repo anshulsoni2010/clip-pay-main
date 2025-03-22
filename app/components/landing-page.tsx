@@ -394,9 +394,9 @@ export function LandingPage({ view }: LandingPageProps) {
             style={{ fontFamily: "'Satoshi Regular'" }}
           >
             <div className="flex justify-center">
-              <button className="bg-black text-white flex gap-4 items-center px-6 py-2 text-sm font-bold rounded-full   hover:bg-gray-900 transition">
-                How Clippay Works
-              </button>
+              <div className="bg-black text-white flex gap-4 items-center px-6 py-2 text-sm font-bold rounded-full   hover:bg-gray-900 transition">
+                Why Choose Clippay
+              </div>
             </div>
             <h2
               className={`text-5xl font-bold text-center text-black mt-4  ${figtree.className}`}
@@ -457,9 +457,9 @@ export function LandingPage({ view }: LandingPageProps) {
           style={{ fontFamily: "'Satoshi Regular'" }}
         >
           <div className="flex justify-center">
-            <button className="bg-black text-white flex gap-4 items-center px-6 py-2 text-sm font-bold rounded-full   hover:bg-gray-900 transition">
+            <div className="bg-black text-white flex gap-4 items-center px-6 py-2 text-sm font-bold rounded-full   hover:bg-gray-900 transition">
               How Clippay Works
-            </button>
+            </div>
           </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <h2
